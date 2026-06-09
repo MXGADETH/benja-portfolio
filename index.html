@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B.S. Portfolio Hub - โรงเรียนเบญจมราชานุสรณ์</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', 'Inter', sans-serif;
+        }
+        /* Custom Maroon color palette mapping for BS School (Benjamarachanusorn) */
+        .bs-maroon { color: #800000; }
+        .bs-bg-maroon { background-color: #800000; }
+        .bs-border-maroon { border-color: #800000; }
+        .bg-pattern {
+            background-color: #800000;
+            background-image: radial-gradient(circle at top right, rgba(251, 191, 36, 0.15), transparent 60%);
+        }
+        
+        /* 3D Floating Animations for Banner Elements */
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0px) rotate(6deg); }
+            50% { transform: translateY(-15px) rotate(8deg); }
+        }
+        @keyframes floatYReverse {
+            0%, 100% { transform: translateY(0px) rotate(-6deg); }
+            50% { transform: translateY(12px) rotate(-4deg); }
+        }
+        .animate-float-slow {
+            animation: floatY 8s ease-in-out infinite;
+        }
+        .animate-float-reverse {
+            animation: floatYReverse 9s ease-in-out infinite 1s;
+        }
+        .animate-float-delayed {
+            animation: floatY 11s ease-in-out infinite 2s;
+        }
+    </style>
+    <!-- React and Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+
+        // Brand colors definitions for each University
+        const UNI_COLORS = {
+            'จุฬาลงกรณ์มหาวิทยาลัย': { primary: '#DF1995', text: 'text-white', badge: 'bg-[#DF1995]' },
+            'มหาวิทยาลัยธรรมศาสตร์': { primary: '#E21C24', secondary: '#FFCD00', text: 'text-white', badge: 'bg-[#E21C24]' },
+            'มหาวิทยาลัยศรีนครินทรวิโรฒ': { primary: '#9A1F36', text: 'text-white', badge: 'bg-[#9A1F36]' },
+            'มหาวิทยาลัยเกษตรศาสตร์': { primary: '#006633', text: 'text-white', badge: 'bg-[#006633]' },
+            'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง': { primary: '#FF5000', text: 'text-white', badge: 'bg-[#FF5000]' },
+            'มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าพระนครเหนือ': { primary: '#990000', secondary: '#FFCC00', text: 'text-white', badge: 'bg-[#990000]' },
+            'มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี': { primary: '#F37021', text: 'text-white', badge: 'bg-[#F37021]' },
+            'วิทยาลัยเพาะช่าง': { primary: '#1A1A1A', secondary: '#800000', text: 'text-white', badge: 'bg-[#800000]' },
+            'มหาวิทยาลัยศิลปากร': { primary: '#00A896', text: 'text-white', badge: 'bg-[#00A896]' },
+            'มหาวิทยาลัยรามคำแหง': { primary: '#003366', secondary: '#FFCC00', text: 'text-white', badge: 'bg-[#003366]' },
+            'มหาวิทยาลัยแม่ฟ้าหลวง': { primary: '#7A1F1D', secondary: '#D4AF37', text: 'text-white', badge: 'bg-[#7A1F1D]' },
+            'มหาวิทยาลัยพะเยา': { primary: '#5B2C6F', secondary: '#F1C40F', text: 'text-white', badge: 'bg-[#5B2C6F]' },
+            'มหาวิทยาลัยสงขลานครินทร์': { primary: '#002C6C', text: 'text-white', badge: 'bg-[#002C6C]' },
+            'มหาวิทยาลัยทักษิณ': { primary: '#1B4F72', secondary: '#2ECC71', text: 'text-white', badge: 'bg-[#1B4F72]' }
+        };
+
+        // 🚨 อัปเดตลิงก์รูปภาพของจริงจาก pic.in.th (Direct URL) ตามที่น้องอัปโหลดไว้เรียบร้อยแล้วครับ!
+        const UNI_LOGOS = {
+            'จุฬาลงกรณ์มหาวิทยาลัย': 'https://img2.pic.in.th/Logo_of_Chulalongkorn_University_Colored.png',
+            'มหาวิทยาลัยธรรมศาสตร์': 'https://img2.pic.in.th/Emblem_of_Thammasat_University.svgee5de45def535933.png',
+            'มหาวิทยาลัยศรีนครินทรวิโรฒ': 'https://upload.wikimedia.org/wikipedia/commons/b/bd/Emblem_of_Srinakharinwirot_University.png',
+            'มหาวิทยาลัยเกษตรศาสตร์': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Kasetsart_University_Logo_Board_%28cropped%29.png/512px-Kasetsart_University_Logo_Board_%28cropped%29.png',
+            'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง': 'https://upload.wikimedia.org/wikipedia/commons/d/df/KMITL_Sublogo.svg',
+            'มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าพระนครเหนือ': 'https://upload.wikimedia.org/wikipedia/commons/e/ee/KMUTNB_Logo.svg',
+            'มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี': 'https://upload.wikimedia.org/wikipedia/commons/7/77/Sublogo_of_King_Mongkut%27s_University_of_Technology_Thonburi.svg',
+            'วิทยาลัยเพาะช่าง': 'https://upload.wikimedia.org/wikipedia/commons/e/ee/RMUTR_Logo.svg', 
+            'มหาวิทยาลัยศิลปากร': 'https://upload.wikimedia.org/wikipedia/commons/4/43/Logo_of_Silpakorn_University.svg',
+            'มหาวิทยาลัยรามคำแหง': 'https://upload.wikimedia.org/wikipedia/commons/5/52/Emblem_of_Ramkhamhaeng_University%2C_BW.svg',
+            'มหาวิทยาลัยแม่ฟ้าหลวง': 'https://upload.wikimedia.org/wikipedia/th/1/15/Mae_Fah_Luang_University_Logo.png',
+            'มหาวิทยาลัยพะเยา': 'https://upload.wikimedia.org/wikipedia/commons/e/ea/Logo_of_University_of_Phayao.svg',
+            'มหาวิทยาลัยสงขลานครินทร์': 'https://upload.wikimedia.org/wikipedia/commons/1/11/Prince_of_Songkla_University_Emblem.png',
+            'มหาวิทยาลัยทักษิณ': 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Thaksin_University_Emblem.png'
+        };
+
+        // Mock Portfolios Data including all 16 detailed realistic profiles
+        const INITIAL_PORTFOLIOS = [
+            {
+                id: 'port-1',
+                title: 'Portfolio ยื่นคณะวิศวกรรมศาสตร์ จุฬาฯ',
+                seniorName: 'พี่เต้ (บ.ส.39)',
+                nickname: 'เต้',
+                gpa: '3.85',
+                track: 'วิทย์-คณิต(Gifted)',
+                university: 'จุฬาลงกรณ์มหาวิทยาลัย',
+                faculty: 'วิศวกรรมศาสตร์',
+                major: 'วิศวกรรมคอมพิวเตอร์',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'รางวัลชนะเลิศการประกวดนวัตกรรมระดับภาค',
+                    'หัวหน้าทีมหุ่นยนต์โรงเรียนเบญจมราชานุสรณ์',
+                    'เกียรติบัตรค่ายเยาวชนคอมพิวเตอร์ระดับประเทศ'
+                ],
+                tips: 'เน้นย้ำเรื่องงานแก้ปัญหาจริงครับ ในพอร์ตให้พยายามบอกว่าโครงการที่เราทำแก้ปัญหาอะไร ไม่ใช่แค่ทำตามคำสั่ง และสรุปผลลัพธ์เป็นตัวเลขเด่น ๆ ให้ชัดเจน!',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'เน้นสีชมพูจุฬาฯ และผลงานเด่น', color: 'bg-pink-700' },
+                    { title: 'ประวัติส่วนตัว (Profile)', desc: 'ทักษะโปรแกรมมิ่ง และเกรดสะสม', color: 'bg-slate-100' },
+                    { title: 'ผลงานเด่น (Highlight Project)', desc: 'สรุปโครงงานหุ่นยนต์แก้ปัญหาด้วย AI', color: 'bg-slate-100' },
+                    { title: 'กิจกรรม (Activities)', desc: 'รวมภาพค่ายอาสาและงานโรงเรียน บ.ส.', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-2',
+                title: 'พอร์ตฟอลิโออักษรศาสตร์ ศิลปะการแสดง มธ.',
+                seniorName: 'พี่พลอย (บ.ส.38)',
+                nickname: 'พลอย',
+                gpa: '3.92',
+                track: 'ฝรั่งเศส-อังกฤษ',
+                university: 'มหาวิทยาลัยธรรมศาสตร์',
+                faculty: 'ศิลปศาสตร์ / อักษรศาสตร์',
+                major: 'การละคอน',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'ประธานชมรมการละครโรงเรียน',
+                    'ได้รับรางวัลนักแสดงนำยอดเยี่ยม ละครเวทีโรงเรียน',
+                    'ผลการสอบภาษาฝรั่งเศสระดับ DELF A2'
+                ],
+                tips: 'พอร์ตสายศิลปะการแสดงต้องเน้นภาพถ่ายที่สื่ออารมณ์ และจัดหน้าให้อ่านง่าย สะอาดตา อย่าลืมใส่ลิงก์คลิปวิดีโอแสดงผลงานสั้น ๆ ผ่าน QR Code ด้วยนะคะ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'แนวอาร์ตเวิร์กโมเดิร์น ธีมส้มแสดบางมด', color: 'bg-orange-600' },
+                    { title: 'Statement of Purpose', desc: 'เรียงความความมุ่งมั่น 1 หน้ากระดาษ', color: 'bg-slate-100' },
+                    { title: 'ผลงานการกำกับละคร', desc: 'ภาพเบื้องหลังการทำงานและบทละคร', color: 'bg-slate-100' },
+                    { title: 'เกียรติบัตร', desc: 'รางวัลด้านศิลปวัฒนธรรมของโรงเรียน', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-3',
+                title: 'รวมผลงานสายวิทย์สุขภาพ ยื่นแพทยศาสตร์ มศว',
+                seniorName: 'พี่หมอเจ (บ.ส.38)',
+                nickname: 'เจ',
+                gpa: '3.98',
+                track: 'วิทย์-คณิต(Gifted)',
+                university: 'มหาวิทยาลัยศรีนครินทรวิโรฒ',
+                faculty: 'แพทยศาสตร์',
+                major: 'แพทยศาสตร์ (โครงการร่วม)',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'ผ่านการฝึกงานจำลองที่โรงพยาบาลรัฐ 60 ชั่วโมง',
+                    'รางวัลรองชนะเลิศโครงงานวิทยาศาสตร์สุขภาพระดับเยาวชน',
+                    'คะแนนสอบ IELTS 7.0'
+                ],
+                tips: 'สำคัญที่สุดสำหรับสายแพทย์คือ "ความเป็นมนุษย์และจิตสาธารณะ" พยายามโชว์เคสงานจิตอาสาและสะท้อนคิด (Reflection) ว่าเราได้เรียนรู้อะไรจากการฝึกงานและค่ายนั้น ๆ ครับ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'เรียบร้อย สะอาดตา ธีมเทา-แดง', color: 'bg-rose-900' },
+                    { title: 'ประสบการณ์โรงพยาบาล', desc: 'สรุปสิ่งที่เรียนรู้จากวอร์ดศัลยกรรม', color: 'bg-slate-100' },
+                    { title: 'โครงงานวิจัยย่อย', desc: 'การวิจัยสารต้านอนุมูลอิสระจากพืชท้องถิ่น', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-4',
+                title: 'พอร์ตยื่นไอที ม.เกษตรศาสตร์ สไตล์มินิมอล',
+                seniorName: 'พี่นนท์ (บ.ส.39)',
+                nickname: 'นนท์',
+                gpa: '3.67',
+                track: 'เทคโนโลยีซอฟแวร์และหุ่นยนต์',
+                university: 'มหาวิทยาลัยเกษตรศาสตร์',
+                faculty: 'วิทยาศาสตร์ / เทคโนโลยีสารสนเทศ',
+                major: 'วิทยาการคอมพิวเตอร์',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'พัฒนาเว็บไซต์แนะแนวโรงเรียนเบญจมราชานุสรณ์',
+                    'ผู้ผ่านการอบรมค่าย สอวน. คอมพิวเตอร์ ค่าย 1',
+                    'ชิ้นงานแอปพลิเคชันจัดตารางการเรียน'
+                ],
+                tips: 'สายไอทีสิ่งที่ดึงดูดที่สุดคือลิงก์ผลงานจริง (GitHub หรือ URL ที่กดได้) ผมแคปหน้าจอ UI ของแอปสวย ๆ มาใส่ และเน้นอธิบายวิธีพัฒนาและการแก้บั๊กครับ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'ดีไซน์สายโค้ดดิ่ง เขียว ม.ก.', color: 'bg-emerald-800' },
+                    { title: 'ทักษะโปรแกรมมิ่ง', desc: 'ระบุภาษาภาษา JS, Python, HTML', color: 'bg-slate-100' },
+                    { title: 'โปรเจกต์เว็บโรงเรียน', desc: 'แชร์เคสการดีไซน์เว็บ บ.ส. และผู้ใช้งาน', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-5',
+                title: 'พอร์ตฟอลิโอวิศวกรรมชีวการแพทย์ สจล. สายกิจกรรมเด่น',
+                seniorName: 'พี่ไอซ์ (บ.ส.39)',
+                nickname: 'ไอซ์',
+                gpa: '3.79',
+                track: 'เทคโนโลยีซอฟแวร์และหุ่นยนต์',
+                university: 'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง',
+                faculty: 'วิศวกรรมศาสตร์',
+                major: 'วิศวกรรมชีวการแพทย์',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'รางวัลระดับชาติ การประกวดโครงงานนวัตกรรมสุขภาพดิจิทัล',
+                    'ผ่านค่ายเยาวชนวิศวกรรมชีวการแพทย์ KMITL Smart Camp',
+                    'สมาชิกร่วมชมรมสิ่งประดิษฐ์โรงเรียนเบญจมราชานุสรณ์'
+                ],
+                tips: 'สจล. เน้นความถนัดทางวิชาชีพและกิจกรรมเชิงปฏิบัติจริงครับ ในส่วนพอร์ตฟอลิโอให้ใส่ข้อมูลวิชาการคู่กับภาพแอคชั่นตอนกำลังทำโครงงานหรือทดลอง เพื่อแสดงความกระตือรือร้น!',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สีแสดเอกลักษณ์ของ สจล. สะดุดตา', color: 'bg-orange-600' },
+                    { title: 'ประวัติและผลงานเด่น', desc: 'ผลงานระดับชาติเชิงนวัตกรรมสุขภาพ', color: 'bg-slate-100' },
+                    { title: 'เกียรติบัตรค่ายวิชาการ', desc: 'สรุปสิ่งที่ได้เรียนรู้จาก KMITL Camp', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-6',
+                title: 'พอร์ตเด็กไอที มจพ. เน้นฝึกงานและใบประกาศนียบัตร',
+                seniorName: 'พี่เอิร์ธ (บ.ส.38)',
+                nickname: 'เอิร์ธ',
+                gpa: '3.52',
+                track: 'เทคโนโลยีซอฟแวร์และหุ่นยนต์',
+                university: 'มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าพระนครเหนือ',
+                faculty: 'วิทยาศาสตร์ / เทคโนโลยีสารสนเทศ',
+                major: 'เทคโนโลยีสารสนเทศ (IT)',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'ผ่านการทดสอบมาตรฐานวิชาชีพไอทีระดับสากล',
+                    'พัฒนาแอปพลิเคชันระบบส่งงานนักเรียนโรงเรียนเบญจมราชานุสรณ์',
+                    'รางวัลรองชนะเลิศแข่งทักษะติดตั้งระบบเครือข่ายคอมพิวเตอร์'
+                ],
+                tips: 'มจพ. ขึ้นชื่อเรื่องการปฏิบัติจริงครับ ถ้ามีเกียรติบัตรการทดสอบฝีมือ ใบผ่านค่ายเทคนิคคอมพิวเตอร์ หรือลิงก์โครงงานเชิงลึกที่มีซอร์สโค้ดให้สแกนจะถูกใจกรรมการสอบสัมภาษณ์มาก ๆ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'ดีไซน์สายเอนจิเนียร์ แดง-เหลือง มจพ.', color: 'bg-amber-800' },
+                    { title: 'ผลงานโครงงานระบบเครือข่าย', desc: 'ผังระบบเชื่อมต่อจำลองสำหรับโรงเรียน', color: 'bg-slate-100' },
+                    { title: 'ทักษะและเกียรติบัตร IT', desc: 'แชร์เคสการดีไซน์ UI และใบเซอร์สำคัญ', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-7',
+                title: 'พอร์ตฟอลิโอด้านการออกแบบสื่อดิจิทัล บางมด (KMUTT)',
+                seniorName: 'พี่บีม (บ.ส.39)',
+                nickname: 'บีม',
+                gpa: '3.70',
+                track: 'มัลติมีเดียและภาพยนต์',
+                university: 'มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี',
+                faculty: 'สถาปัตยกรรมและการออกแบบ',
+                major: 'เทคโนโลยีมีเดีย (Media Technology)',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'รับหน้าที่หัวหน้าฝ่ายออกแบบกราฟิกงานกีฬาสีเบญจมพิกุลทอง',
+                    'ชนะเลิศการประกวดออกแบบโลโก้ระดับเขตพื้นที่การศึกษา',
+                    'ทำแอนิเมชัน 2D เผยแพร่ความรู้สะสมยอดชม 5,000 ครั้ง'
+                ],
+                tips: 'พอร์ตมีเดียบางมดเน้นคุณค่าของการเล่าเรื่องและทักษะการออกแบบที่ใช้งานได้จริงค่ะ ควรโชว์กระบวนการคิด (Design Process) ตั้งแต่ Sketch จนถึงงาน Final ในพอร์ตให้ชัดเจนค่ะ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'แนวอาร์ตเวิร์กโมเดิร์น ธีมส้มแสดบางมด', color: 'bg-orange-600' },
+                    { title: 'รวมผลงานออกแบบ (Portfolio)', desc: 'โลโก้และสื่อโฆษณาประชาสัมพันธ์ที่ได้รับรางวัล', color: 'bg-slate-100' },
+                    { title: 'ขั้นตอนการทำงานแอนิเมชัน', desc: 'บอร์ดกระบวนการคิดและดีไซน์ตัวละคร', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-8',
+                title: 'พอร์ตโฟลิโอจิตรกรรมไทยและศิลปะประยุกต์ โรงเรียนวิจิตรศิลป์เพาะช่าง',
+                seniorName: 'พี่อาร์ต (บ.ส.38)',
+                nickname: 'อาร์ต',
+                gpa: '3.45',
+                track: 'มัลติมีเดียและภาพยนต์',
+                university: 'วิทยาลัยเพาะช่าง',
+                faculty: 'สถาปัตยกรรมและการออกแบบ',
+                major: 'จิตรกรรมไทย',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'รางวัลชนะเลิศ การวาดภาพสดประเพณีไทยประจำจังหวัด',
+                    'จัดแสดงนิทรรศการผลงานศิลปะเยาวชน ณ หอศิลป์นนทบุรี',
+                    'ออกแบบลวดลายฉากเวทีคอนเสิร์ตและกิจกรรมสำคัญของโรงเรียน'
+                ],
+                tips: 'การสอบเข้าเพาะช่างต้องการแฟ้มสะสมงานที่แสดงอัตลักษณ์ชัดเจนและมีลายเส้น (Drawing) และงานสีน้ำที่เป็นของตนเองอย่างเชี่ยวชาญ แนะนำให้คัดเลือกงานที่ดีที่สุด 10 ชิ้นแล้วสแกนคุณภาพสูงครับ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สไตล์จิตรกรรมร่วมสมัย แดงเลือดหมู-ดำ', color: 'bg-red-950' },
+                    { title: 'รวมงาน Drawing', desc: 'ผลงานลายเส้นดินสอและถ่าน', color: 'bg-slate-100' },
+                    { title: 'ผลงานสีน้ำและสีอะคริลิก', desc: 'เทคนิคสร้างสรรค์วัฒนธรรมไทยประยุกต์', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-9',
+                title: 'พอร์ตมัณฑนศิลป์ ออกแบบภายใน ม.ศิลปากร คัดแล้วคุณภาพเน้นๆ',
+                seniorName: 'พี่เต้ย (บ.ส.39)',
+                nickname: 'เต้ย',
+                gpa: '3.62',
+                track: 'คณิต-อังกฤษ',
+                university: 'มหาวิทยาลัยศิลปากร',
+                faculty: 'สถาปัตยกรรมและการออกแบบ',
+                major: 'ออกแบบภายใน',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'เข้าร่วมค่ายสถาปัตยกรรมและการออกแบบศิลปะ มศก.',
+                    'ออกแบบผังบูธงานกิจกรรมประจำกลุ่มสาระภาษาต่างประเทศ บ.ส.',
+                    'ชนะเลิศการออกแบบโปสเตอร์ส่งเสริมการท่องเที่ยวเชิงวัฒนธรรม'
+                ],
+                tips: 'พอร์ตของศิลปากรต้องชัดเจนเรื่อง Perspective และทัศนศิลป์ครับ พี่แชร์ขั้นตอนการคิดและไอเดียการตีโจทย์การออกแบบในพอร์ตเล่มนี้ไว้ด้วย เพื่อแสดงให้เห็นกระบวนการออกแบบที่ไม่ซ้ำใครครับ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สีเขียวเวอร์ดิจิส (สีน้ำทะเล) สัญลักษณ์ศิลปากร', color: 'bg-[#00A896]' },
+                    { title: 'Sketch Design', desc: 'รวมงานสเก็ตช์ Perspective อาคารภายใน', color: 'bg-slate-100' },
+                    { title: 'เกียรติบัตรและค่ายกิจกรรม', desc: 'ภาพถ่ายร่วมค่ายและเกียรติบัตรรับรอง', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-10',
+                title: 'แชร์ประสบการณ์ยื่นพอร์ตเรียนพรีดีกรีและนิติตัวจริง ม.รามคำแหง',
+                seniorName: 'พี่เกด (บ.ส.38)',
+                nickname: 'เกด',
+                gpa: '3.80',
+                track: 'สื่อสารมวลชนและสังคมศาสตร์',
+                university: 'มหาวิทยาลัยรามคำแหง',
+                faculty: 'รัฐศาสตร์ / นิติศาสตร์',
+                major: 'นิติศาสตร์',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'สะสมหน่วยกิตล่วงหน้า (Pre-degree) ม.ราม ได้ 36 หน่วยกิต',
+                    'รางวัลชนะเลิศการแข่งขันตอบปัญหากฎหมายวันรพีระดับจังหวัด',
+                    'ประธานสภานักเรียนโรงเรียนเบญจมราชานุสรณ์'
+                ],
+                tips: 'สำหรับน้อง ๆ ที่เรียน Pre-degree ไปด้วย การยื่นนิติศาสตร์ ม.รามคำแหง หรือการอวดทักษะในพอร์ตจะเน้นไปที่ทักษะการคิดวิเคราะห์ ความมีเหตุผลเชิงกฎหมาย และกิจกรรมสาธารณะประโยชน์เป็นหลักค่ะ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สีน้ำเงิน-ทอง สไตล์เป็นทางการและมั่นคง', color: 'bg-[#003366]' },
+                    { title: 'ใบรายงานผลการเรียนล่วงหน้า', desc: 'พรีวิวใบทรานสคริปต์รายวิชาพรีดีกรี', color: 'bg-slate-100' },
+                    { title: 'ผลงานตอบปัญหากฎหมาย', desc: 'สรุปข้อมูลการแข่งขันตอบปัญหากฎหมายในวันรพี', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-11',
+                title: 'พอร์ตสายจีนศึกษา แม่ฟ้าหลวง (MFU) หลักสูตรนานาชาติ',
+                seniorName: 'พี่ชา (บ.ส.39)',
+                nickname: 'ชา',
+                gpa: '3.75',
+                track: 'จีน-อังกฤษ',
+                university: 'มหาวิทยาลัยแม่ฟ้าหลวง',
+                faculty: 'ศิลปศาสตร์ / อักษรศาสตร์',
+                major: 'จีนศึกษา (หลักสูตรนานาชาติ)',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'คะแนนสอบวัดระดับภาษาจีน HSK ระดับ 4 (คะแนน 245/300)',
+                    'ได้รับทุนเรียนภาษาจีนระยะสั้น ณ มหาวิทยาลัยคู่ขนานประเทศจีน',
+                    'ได้รับเหรียญทองการแข่งขันกล่าวสุนทรพจน์ภาษาจีนระดับภาค'
+                ],
+                tips: 'มฟล. เน้นการเรียนการสอนเป็นภาษาอังกฤษและจีน เพราะฉะนั้นพอร์ตโฟลิโอแนะแนวให้เขียนเป็นภาษาจีนคู่กับภาษาอังกฤษทั้งหมดค่ะ ยื่นคะแนน HSK ลงไปในหน้าประวัติด้วย จะช่วยให้กรรมการสนใจมากยิ่งขึ้น',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'ธีมแดงก่ำ-ทอง งดงามตามสไตล์แม่ฟ้าหลวง', color: 'bg-[#7A1F1D]' },
+                    { title: 'HSK Certificate', desc: 'ใบรับรองผลคะแนน HSK และวิชาการ', color: 'bg-slate-100' },
+                    { title: 'กิจกรรมแลกเปลี่ยนวัฒนธรรม', desc: 'ภาพถ่ายแสดงทักษะการสนทนาและการทำกิจกรรมร่วมกับชาวต่างชาติ', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-12',
+                title: 'พอร์ตสุขภาพชุมชน วิทยาศาสตร์การแพทย์ ม.พะเยา',
+                seniorName: 'พี่นิว (บ.ส.39)',
+                nickname: 'นิว',
+                gpa: '3.58',
+                track: 'วิทย์-คณิต',
+                university: 'มหาวิทยาลัยพะเยา',
+                faculty: 'พยาบาลศาสตร์ / สาธารณสุข',
+                major: 'สาธารณสุขศาสตร์',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'ร่วมทีมรณรงค์ตรวจสุขภาพเบื้องต้นชุมชนรอบโรงเรียน บ.ส.',
+                    'ผ่านการฝึกอบรมปฐมพยาบาลเบื้องต้น (First Aid & CPR)',
+                    'เกียรติบัตรการจัดทำโครงงานวิเคราะห์คุณภาพน้ำดื่มในชุมชน'
+                ],
+                tips: 'การยื่นพอร์ต ม.พะเยา ในสายวิทยาศาสตร์สุขภาพ ต้องเน้นย้ำถึงการลงพื้นที่เรียนรู้และการบริการส่วนรวมค่ะ นำภาพถ่ายที่จับต้องได้ตอนเรากำลังลงพื้นที่ช่วยเหลือสังคมหรือร่วมกับทางโรงพยาบาลมาใส่และวิเคราะห์ผลลัพธ์ค่ะ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'ธีมม่วง-ทอง หรูหราและอ่อนโยน', color: 'bg-[#5B2C6F]' },
+                    { title: 'First Aid Training', desc: 'ภาพการอบรมกู้ชีพเบื้องต้น CPR', color: 'bg-slate-100' },
+                    { title: 'โครงงานสาธารณสุขโรงเรียน', desc: 'ข้อมูลสรุปโครงงานลดละเลิกบุหรี่ในกลุ่มวัยรุ่น บ.ส.', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-13',
+                title: 'พอร์ตโฟลิโอพยาบาลศาสตร์ ม.สงขลานครินทร์ (ม.อ.) โดนใจคณะกรรมการ',
+                seniorName: 'พี่ใต้ (บ.ส.38)',
+                nickname: 'ใต้',
+                gpa: '3.82',
+                track: 'วิทย์-คณิต',
+                university: 'มหาวิทยาลัยสงขลานครินทร์',
+                faculty: 'พยาบาลศาสตร์ / สาธารณสุข',
+                major: 'พยาบาลศาสตร์',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'ผ่านการฝึกงานจำลองสังเกตการณ์ ณ โรงพยาบาลอำเภอ 40 ชั่วโมง',
+                    'รางวัลดีเด่นการเขียนเรียงความ "จรรยาบรรณวิชาชีพพยาบาลในมุมมองยุคใหม่"',
+                    'ผู้ก่อตั้งกิจกรรมรณรงค์ป้องกันไข้เลือดออกของชมรมจิตอาสาโรงเรียน'
+                ],
+                tips: 'ม.อ. ให้ความสำคัญอย่างมากกับคุณลักษณะที่เหมาะสมกับวิชาชีพพยาบาล ความอดทน ความเมตตา และความยืดหยุ่น ควรเขียนอธิบายความรู้สึกหลังจากที่ลงไปสังเกตการณ์ที่โรงพยาบาลจริง ๆ ว่าเราได้อะไรกลับมา',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สีน้ำเงินสว่าง-ทอง เอกลักษณ์ ม.อ. สะอาดตา', color: 'bg-[#002C6C]' },
+                    { title: 'ประวัติการฝึกงานวิชาชีพ', desc: 'สรุปการทำงานร่วมกับพี่พยาบาลที่วอร์ดผู้ป่วยนอก', color: 'bg-slate-100' },
+                    { title: 'กิจกรรมบำเพ็ญประโยชน์', desc: 'ภาพถ่ายร่วมจัดค่ายสุขภาพเด็กประถม', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-14',
+                title: 'พอร์ตสอบติดครูภาษาไทย มหาวิทยาลัยทักษิณ สายกิจกรรมวิชาการแน่น',
+                seniorName: 'พี่แก้ว (บ.ส.39)',
+                nickname: 'แก้ว',
+                gpa: '3.72',
+                track: 'คณิต-อังกฤษ',
+                university: 'มหาวิทยาลัยทักษิณ',
+                faculty: 'ศึกษาศาสตร์ / ครุศาสตร์',
+                major: 'การสอนภาษาไทย',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'รางวัลระดับประเทศประกวดแต่งกลอนสุภาพเนื่องในวันสุนทรภู่',
+                    'ร่วมเป็นวิทยากรช่วยสอนวิชาภาษาไทยขั้นพื้นฐานให้น้อง ม.ต้น ในโรงเรียน',
+                    'ผู้จัดทำสื่อวิดีโออนิเมะสอนหลักไวยากรณ์ภาษาไทยบน TikTok ยอดชม 10k+'
+                ],
+                tips: 'คณะศึกษาศาสตร์ ม.ทักษิณ มองหาเด็กที่มีจิตวิญญาณความเป็นครู มีวาทศิลป์ และมีสื่อการสอนนวัตกรรมใหม่ ๆ ค่ะ การใส่ภาพและคิวอาร์โค้ดวิดีโอสอนของเราจะช่วยดึงคะแนนจากคณะกรรมการได้มหาศาลค่ะ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สีเทา-ฟ้า คลาสสิกตามสัญลักษณ์ ม.ทักษิณ', color: 'bg-[#1B4F72]' },
+                    { title: 'นวัตกรรมการสอนภาษาไทย', desc: 'สรุปรูปแบบบอร์ดเกมและภาพวิดีโอสอนบนช่อง TikTok', color: 'bg-slate-100' },
+                    { title: 'ผลงานการประกวดแต่งคำประพันธ์', desc: 'แชร์เคสโครงร่างการส่งกลอนเข้าแข่งขัน', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-15',
+                title: 'พอร์ตวิศวฯ เกษตร (KU) รอบโควตา ภาคตะวันออก',
+                seniorName: 'พี่เบิร์ด (บ.ส.39)',
+                nickname: 'เบิร์ด',
+                gpa: '3.65',
+                track: 'วิทย์-คณิต',
+                university: 'มหาวิทยาลัยเกษตรศาสตร์',
+                faculty: 'วิศวกรรมศาสตร์',
+                major: 'วิศวกรรมโยธา',
+                round: 'รอบ 2 โควตา',
+                highlights: [
+                    'ผ่านการสอบวัดระดับทักษะวิศวกรรมพื้นฐาน',
+                    'รางวัลโครงงานนวัตกรรมสิ่งก่อสร้างประหยัดพลังงาน',
+                    'สมาชิกทีมอาสาพัฒนาอาคารโรงเรียนเบญจมราชานุสรณ์'
+                ],
+                tips: 'โควตาเกษตรเน้นความสม่ำเสมอของกิจกรรมที่เกี่ยวข้องกับวิชาการวิศวกรรมครับ พี่เน้นโชว์เคสงานอาสาที่ได้ลงมือปฏิบัติจริงควบคู่กับทฤษฎีครับ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'สีเขียว-ขาว ม.ก.', color: 'bg-[#006633]' },
+                    { title: 'โครงงานวิศวกรรม', desc: 'สรุปงานคำวณโครงสร้าง', color: 'bg-slate-100' }
+                ]
+            },
+            {
+                id: 'port-16',
+                title: 'พอร์ตยื่นรัฐศาสตร์ จุฬาฯ ความสัมพันธ์ระหว่างประเทศ',
+                seniorName: 'พี่แพร (บ.ส.39)',
+                nickname: 'แพร',
+                gpa: '3.95',
+                track: 'สื่อสารมวลชนและสังคมศาสตร์',
+                university: 'จุฬาลงกรณ์มหาวิทยาลัย',
+                faculty: 'รัฐศาสตร์',
+                major: 'รัฐศาสตร์ (ความสัมพันธ์ระหว่างประเทศ)',
+                round: 'รอบ 1 Portfolio',
+                highlights: [
+                    'คะแนนสอบภาษาอังกฤษ TOEFL 105',
+                    'ตัวแทนเยาวชนอาเซียนโครงการจำลองสถานการณ์การทูต',
+                    'รางวัลชนะเลิศเรียงความปัญหาสังคมโลก'
+                ],
+                tips: 'พอร์ตสายรัฐศาสตร์ จุฬาฯ ต้องแสดงให้เห็นถึง "วิสัยทัศน์" ครับ พี่แนะให้เน้นกิจกรรมที่สะท้อนการมองปัญหาเชิงโครงสร้างและทักษะภาษาอังกฤษครับ',
+                hasPdpaChecked: true,
+                status: 'approved',
+                pagePreviews: [
+                    { title: 'หน้าปก (Cover)', desc: 'ธีมชมพู-ทอง หรูหรา', color: 'bg-[#DF1995]' },
+                    { title: 'เรียงความความสัมพันธ์ระหว่างประเทศ', desc: 'มุมมองต่อวิกฤตการณ์โลก', color: 'bg-slate-100' }
+                ]
+            }
+        ];
+
+        // Fallback Vector SVG Letter Badge component if external image fails to load
+        function LogoFallback({ name }) {
+            const initials = name ? name.substring(0, 2) : 'บ.ส.';
+            return (
+                <div className="w-full h-full bg-slate-100 flex items-center justify-center border border-slate-200 rounded-full select-none">
+                    <span className="text-[10px] font-extrabold text-slate-600 tracking-tighter text-center">{initials}</span>
+                </div>
+            );
+        }
+
+        // Dynamic University Emblem Generator - Optimized for Square Image compatibility within a Circle Frame!
+        function UniversityEmblem({ name, size = 'w-10 h-10' }) {
+            const [imgFailed, setImgFailed] = useState(false);
+            const logoUrl = UNI_LOGOS[name];
+
+            return (
+                <div className={`inline-block shrink-0 ${size} bg-white rounded-full overflow-hidden shadow-sm border border-slate-200/80 flex items-center justify-center p-1 transition-all duration-300 hover:scale-105`}>
+                    {!imgFailed && logoUrl ? (
+                        <img 
+                            src={logoUrl} 
+                            alt={name} 
+                            onError={() => setImgFailed(true)} 
+                            className="w-full h-full object-contain max-h-full max-w-full select-none"
+                            referrerPolicy="no-referrer"
+                        />
+                    ) : (
+                        <LogoFallback name={name} />
+                    )}
+                </div>
+            );
+        }
+
+        function App() {
+            const [portfolios, setPortfolios] = useState(INITIAL_PORTFOLIOS);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [selectedUni, setSelectedUni] = useState('all');
+            const [selectedFaculty, setSelectedFaculty] = useState('all');
+            const [selectedRound, setSelectedRound] = useState('all');
+            const [activeTab, setActiveTab] = useState('junior'); // 'junior' | 'senior' | 'admin' | 'ai-helper'
+            
+            // System States for Demo Protection
+            const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+            const [adminPassword, setAdminPassword] = useState('');
+
+            // Premium Detail Modal and Notification Dialog states
+            const [selectedPort, setSelectedPort] = useState(null);
+            const [notification, setNotification] = useState(null); // { title: '', message: '', type: 'info'|'success' }
+
+            // Senior Submit Form State
+            const [formName, setFormName] = useState('');
+            const [formNickname, setFormNickname] = useState('');
+            const [formGpa, setFormGpa] = useState('');
+            const [formTrack, setFormTrack] = 'วิทย์-คณิต';
+            const [formUni, setFormUni] = useState('จุฬาลงกรณ์มหาวิทยาลัย');
+            const [formFaculty, setFormFaculty] = useState('วิศวกรรมศาสตร์');
+            const [formMajor, setFormMajor] = useState('');
+            const [formRound, setFormRound] = useState('รอบ 1 Portfolio');
+            const [formTitle, setFormTitle] = useState('');
+            const [formHighlights, setFormHighlights] = useState('');
+            const [formTips, setFormTips] = useState('');
+            const [pdpaWarningAccepted, setPdpaWarningAccepted] = useState(false);
+            const [pdpaConsent, setPdpaConsent] = useState(false);
+            const [formFeedback, setFormFeedback] = useState('');
+
+            // AI Help State
+            const [aiQuestion, setAiQuestion] = useState('');
+            const [aiHistory, setAiHistory] = useState([
+                { sender: 'ai', text: 'สวัสดีครับน้อง ๆ เด็กเบญจมราชานุสรณ์ทุกคน พี่คือ AI แนะแนวประจำระบบคลังพอร์ต บ.ส. อยากเตรียมผลงานยื่นมหาวิทยาลัยไหน คณะอะไร หรืออยากรู้ข้อมูลเด่นของ สจล. มจพ. บางมด เพาะช่าง ศิลปากร รามคำแหง แม่ฟ้าหลวง พะเยา สงขลา ทักษิณ ทักทายมาถามพี่ได้เลย!' }
+            ]);
+            const [aiLoading, setAiLoading] = useState(false);
+
+            // Auto-initialize lucide icons on render
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [activeTab, selectedPort, portfolios, aiHistory, notification, isAdminLoggedIn]);
+
+            // Filter Options
+            const universities = useMemo(() => {
+                const list = portfolios.filter(p => p.status === 'approved').map(p => p.university);
+                return ['all', ...new Set(list)];
+            }, [portfolios]);
+
+            const faculties = useMemo(() => {
+                const list = portfolios.filter(p => p.status === 'approved').map(p => p.faculty);
+                return ['all', ...new Set(list)];
+            }, [portfolios]);
+
+            // Filtered Portfolios for Juniors
+            const filteredPortfolios = useMemo(() => {
+                return portfolios.filter(p => {
+                    if (p.status !== 'approved') return false;
+                    
+                    const matchesSearch = 
+                        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        p.major.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        p.seniorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        p.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()));
+                    
+                    const matchesUni = selectedUni === 'all' || p.university === selectedUni;
+                    const matchesFaculty = selectedFaculty === 'all' || p.faculty === selectedFaculty;
+                    const matchesRound = selectedRound === 'all' || p.round === selectedRound;
+
+                    return matchesSearch && matchesUni && matchesFaculty && matchesRound;
+                });
+            }, [portfolios, searchQuery, selectedUni, selectedFaculty, selectedRound]);
+
+            // Helper function to trigger elegant custom notifications
+            const triggerNotification = (title, message, type = 'info') => {
+                setNotification({ title, message, type });
+            };
+
+            // Submit Portfolio from Senior
+            const handleSubmitPortfolio = (e) => {
+                e.preventDefault();
+                if (!pdpaConsent) {
+                    triggerNotification(
+                        'แจ้งเตือนนโยบายข้อมูล',
+                        'กรุณายอมรับนโยบายคุ้มครองข้อมูลส่วนบุคคล (PDPA) เพื่อความปลอดภัยก่อนส่งผลงาน',
+                        'info'
+                    );
+                    return;
+                }
+
+                if (!formName || !formUni || !formMajor || !formHighlights) {
+                    triggerNotification(
+                        'ข้อมูลไม่ครบถ้วน',
+                        'กรุณากรอกข้อมูลสำคัญที่มีสัญลักษณ์ (*) ให้ครบถ้วน',
+                        'info'
+                    );
+                    return;
+                }
+
+                const newPort = {
+                    id: 'port-' + Date.now(),
+                    title: formTitle || `Portfolio ยื่นคณะ${formFaculty} ${formUni}`,
+                    seniorName: `${formName} (บ.ส.รุ่นล่าสุด)`,
+                    nickname: formNickname || 'รุ่นพี่',
+                    gpa: formGpa || 'N/A',
+                    track: formTrack,
+                    university: formUni,
+                    faculty: formFaculty,
+                    major: formMajor,
+                    round: formRound,
+                    highlights: formHighlights.split('\n').filter(h => h.trim() !== ''),
+                    tips: formTips || 'สู้ ๆ นะครับน้อง ๆ ความพยายามไม่เคยทรยศใคร มาร่วมเป็นลูกแม่พิกุลทองด้วยกันครับ',
+                    hasPdpaChecked: pdpaWarningAccepted,
+                    status: 'pending', // Awaiting admin approval
+                    pagePreviews: [
+                        { title: 'หน้าปกจำลอง', desc: `ยื่น ${formFaculty} - ${formMajor}`, color: 'bg-slate-700' },
+                        { title: 'ผลงานหลัก', desc: 'ข้อมูลจากผลงานเด่นที่พี่กรอกเข้ามา', color: 'bg-slate-100' }
+                    ]
+                };
+
+                setPortfolios([newPort, ...portfolios]);
+                setFormFeedback('success');
+                
+                // Clear Form
+                setFormName('');
+                setFormNickname('');
+                setFormGpa('');
+                setFormMajor('');
+                setFormHighlights('');
+                setFormTips('');
+                setFormTitle('');
+                setPdpaWarningAccepted(false);
+                setPdpaConsent(false);
+            };
+
+            // Admin Authentication Simulation
+            const handleAdminLogin = (e) => {
+                e.preventDefault();
+                if (adminPassword.trim() !== "") {
+                    setIsAdminLoggedIn(true);
+                    setAdminPassword('');
+                    triggerNotification('เข้าสู่ระบบสำเร็จ', 'ยืนยันสิทธิ์แอดมินปลดล็อก Sandbox ตรวจสอบเรียบร้อย', 'success');
+                } else {
+                    triggerNotification('รหัสผ่านว่างเปล่า', 'กรุณากรอกรหัสผ่านใดก็ได้เพื่อใช้จำลองสิทธิ์แอดมินครับ', 'info');
+                }
+            };
+
+            // Admin Actions
+            const handleApprove = (id) => {
+                setPortfolios(portfolios.map(p => p.id === id ? { ...p, status: 'approved' } : p));
+                triggerNotification('ทำรายการสำเร็จ', 'อนุมัติพอร์ตโฟลิโอเข้าระบบเป็นที่เรียบร้อย', 'success');
+            };
+
+            const handleReject = (id) => {
+                setPortfolios(portfolios.filter(p => p.id !== id));
+                triggerNotification('ทำรายการสำเร็จ', 'ปฏิเสธและลบข้อมูลพอร์ตเสร็จสิ้น', 'success');
+            };
+
+            // Call Gemini API for AI Advice
+            const handleAskAI = async (e) => {
+                e.preventDefault();
+                if (!aiQuestion.trim()) return;
+
+                const userText = aiQuestion;
+                setAiHistory(prev => [...prev, { sender: 'user', text: userText }]);
+                setAiQuestion('');
+                setAiLoading(true);
+
+                try {
+                    const systemPrompt = `คุณคือ "พี่แนะแนวอัจฉริยะ (AI Port Advisor)" ประจำระบบคลังพอร์ตโฟลิโอ "B.S. Portfolio Hub" ของโรงเรียนเบญจมราชานุสรณ์ 
+                    ตอบคำถามภาษาไทยอย่างเป็นกันเอง สนุกสนาน มีสาระ ใช้สรรพนามแทนตัวเองว่า "พี่" และเรียกผู้ใช้ว่า "น้องๆ บ.ส." หรือ "น้อง" 
+                    ให้คำแนะนำการเตรียมตัวเรียนต่อรอบ Portfolio (TCAS 1) คณะต่าง ๆ ที่น้องถามมา โดยยึดหลักเกณฑ์ความต้องการของมหาวิทยาลัยต่าง ๆ 
+                    โดยเฉพาะ: จุฬา, ธรรมศาสตร์, มศว, เกษตรศาสตร์, สจล, มจพ, บางมด, เพาะช่าง, ศิลปากร, รามคำแหง, แม่ฟ้าหลวง, พะเยา, สงขลา, และทักษิณ 
+                    เสนอแนะแนวทางกิจกรรมที่ควรเก็บ และชวนคุยอย่างอบอุ่นแบบลูกแม่พิกุลทอง`;
+
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                    const payload = {
+                        contents: [{
+                            parts: [{ text: `น้องถามว่า: ${userText}` }]
+                        }],
+                        systemInstruction: {
+                            parts: [{ text: systemPrompt }]
+                        }
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+                    const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "ขออภัยด้วยนะน้องเอ๊ย พี่มึนๆ นิดหน่อย ลองถามพี่ใหม่อีกครั้งได้ไหมครับ";
+
+                    setAiHistory(prev => [...prev, { sender: 'ai', text: aiText }]);
+                } catch (error) {
+                    console.error("AI Error:", error);
+                    setAiHistory(prev => [...prev, { sender: 'ai', text: "ตอนนี้สัญญาณพี่แนะแนวขาดหายไปชั่วคราว ลองเชื่อมต่อใหม่อีกครั้งนะน้อง ๆ บ.ส.!" }]);
+                } finally {
+                    setAiLoading(false);
+                }
+            };
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* Header with PROMAX+++ badge */}
+                    <header className="bg-[#800000] text-white shadow-md sticky top-0 z-30 border-b border-amber-500/30">
+                        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border-2 border-amber-400">
+                                    <span className="text-xl font-bold text-[#800000]">บ.ส.</span>
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold tracking-tight flex items-center gap-2">
+                                        B.S. Portfolio Hub
+                                        <span className="relative flex h-5 w-auto">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-20"></span>
+                                            <span className="relative inline-flex items-center rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-500 px-2 py-0.5 text-[8px] sm:text-[9px] font-extrabold text-slate-950 uppercase tracking-widest shadow-lg shadow-amber-500/30">
+                                                promax+++
+                                            </span>
+                                        </span>
+                                    </h1>
+                                    <p className="text-xs text-rose-200">คลังพอร์ตรุ่นพี่เบญจมราชานุสรณ์ • ปันพอร์ต ส่งต่อแรงบันดาลใจ</p>
+                                </div>
+                            </div>
+
+                            {/* Nav Tabs */}
+                            <nav className="flex bg-rose-950/50 p-1 rounded-xl border border-rose-800 w-full md:w-auto overflow-x-auto">
+                                <button 
+                                    onClick={() => { setActiveTab('junior'); setFormFeedback(''); }}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'junior' ? 'bg-white text-[#800000] shadow' : 'text-rose-100 hover:bg-rose-900/40'}`}
+                                >
+                                    <i data-lucide="search" className="w-4 h-4"></i>
+                                    น้อง ๆ ค้นหาพอร์ต
+                                </button>
+                                <button 
+                                    onClick={() => { setActiveTab('senior'); setFormFeedback(''); }}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'senior' ? 'bg-white text-[#800000] shadow' : 'text-rose-100 hover:bg-rose-900/40'}`}
+                                >
+                                    <i data-lucide="share-2" className="w-4 h-4"></i>
+                                    รุ่นพี่แชร์ผลงาน
+                                </button>
+                                <button 
+                                    onClick={() => { setActiveTab('ai-helper'); setFormFeedback(''); }}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'ai-helper' ? 'bg-white text-[#800000] shadow' : 'text-rose-100 hover:bg-rose-900/40'}`}
+                                >
+                                    <i data-lucide="sparkles" className="w-4 h-4 text-amber-300"></i>
+                                    AI พี่แนะแนว บ.ส.
+                                </button>
+                                <button 
+                                    onClick={() => { setActiveTab('admin'); setFormFeedback(''); }}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap relative ${activeTab === 'admin' ? 'bg-white text-[#800000] shadow' : 'text-rose-100 hover:bg-rose-900/40'}`}
+                                >
+                                    <i data-lucide="shield-check" className="w-4 h-4"></i>
+                                    หลังบ้านแอดมิน
+                                    {portfolios.filter(p => p.status === 'pending').length > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-amber-400 text-slate-900 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
+                                            {portfolios.filter(p => p.status === 'pending').length}
+                                        </span>
+                                    )}
+                                </button>
+                            </nav>
+                        </div>
+                    </header>
+
+                    {/* Banner Section with 3D FLOATING PORTFOLIOS BACKGROUND */}
+                    <section className="bg-pattern text-white py-12 px-4 relative overflow-hidden border-b-4 border-amber-400">
+                        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none select-none overflow-hidden hidden lg:block">
+                            {/* Floating Card 1 (Chula Cover mockup) */}
+                            <div className="absolute top-4 right-12 w-28 aspect-[3/4] bg-slate-950 border border-slate-800 rounded-xl p-1.5 shadow-2xl animate-float-slow transform origin-center">
+                                <img src="https://img2.pic.in.th/Logo_of_Chulalongkorn_University_Colored.png" className="w-full h-[65%] object-contain rounded bg-white p-1" alt="" />
+                                <div className="h-[35%] bg-slate-900 mt-1 rounded p-1 flex flex-col justify-between">
+                                    <div className="w-10 h-1 bg-[#DF1995] rounded"></div>
+                                    <div className="w-16 h-1 bg-slate-700 rounded mt-0.5"></div>
+                                    <div className="w-8 h-1 bg-slate-800 rounded mt-0.5"></div>
+                                </div>
+                            </div>
+                            
+                            {/* Floating Card 2 (Thammasat Cover mockup) */}
+                            <div className="absolute bottom-4 right-64 w-24 aspect-[3/4] bg-slate-950 border border-slate-800 rounded-xl p-1.5 shadow-2xl animate-float-reverse transform origin-center">
+                                <img src="https://img2.pic.in.th/Emblem_of_Thammasat_University.svgee5de45def535933.png" className="w-full h-[65%] object-contain rounded bg-white p-1" alt="" />
+                                <div className="h-[35%] bg-slate-900 mt-1 rounded p-1 flex flex-col justify-between">
+                                    <div className="w-12 h-1 bg-[#E21C24] rounded"></div>
+                                    <div className="w-14 h-1 bg-slate-700 rounded mt-0.5"></div>
+                                </div>
+                            </div>
+
+                            {/* Floating Card 3 (Kasetsart Cover mockup) */}
+                            <div className="absolute top-12 right-96 w-24 aspect-[3/4] bg-slate-950 border border-slate-800 rounded-xl p-1.5 shadow-2xl animate-float-delayed transform origin-center">
+                                <div className="w-full h-[65%] bg-[#006633] rounded flex items-center justify-center text-xs font-bold text-white">KU</div>
+                                <div className="h-[35%] bg-slate-900 mt-1 rounded p-1 flex flex-col justify-between">
+                                    <div className="w-8 h-1 bg-[#006633] rounded"></div>
+                                    <div className="w-12 h-1 bg-slate-700 rounded mt-0.5"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                            <div className="max-w-2xl text-center md:text-left">
+                                <span className="bg-amber-400/25 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full border border-amber-400/30 uppercase tracking-wider">
+                                    Project Showcase • บ.ส. พิกุลทองโดดเด่น
+                                </span>
+                                <h2 className="text-3xl md:text-4xl font-bold mt-3 leading-tight">
+                                    ส่งต่อความสำเร็จของรุ่นพี่ บ.ส. <br />สู่ใบเบิกทางระดับอุดมศึกษา
+                                </h2>
+                                <p className="text-rose-100 mt-3 text-sm md:text-base">
+                                    คลังรวบรวมพอร์ตโฟลิโอตัวจริงสีสันเฉพาะสถาบัน ค้นหารุ่นพี่ที่ผ่านคัดเลือก 14 มหาวิทยาลัยชื่อดังทั่วราชอาณาจักร ด้วยระบบคัดกรองอัจฉริยะเพื่อปูทางสู่ความสำเร็จ
+                                </p>
+                            </div>
+                            <div className="flex gap-4 bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/20 shadow-xl">
+                                <div className="text-center px-4">
+                                    <div className="text-2xl md:text-3xl font-extrabold text-amber-300">
+                                        {portfolios.filter(p => p.status === 'approved').length}
+                                    </div>
+                                    <div className="text-[11px] text-rose-200">พอร์ตในระบบ</div>
+                                </div>
+                                <div className="border-r border-white/20"></div>
+                                <div className="text-center px-4">
+                                    <div className="text-2xl md:text-3xl font-extrabold text-amber-300">14</div>
+                                    <div className="text-[11px] text-rose-200">มหาวิทยาลัย</div>
+                                </div>
+                                <div className="border-r border-white/20"></div>
+                                <div className="text-center px-4">
+                                    <div className="text-2xl md:text-3xl font-bold text-amber-300">บ.ส.</div>
+                                    <div className="text-[11px] text-rose-200">นนทบุรี</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Main Content Area */}
+                    <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
+
+                        {/* TAB 1: JUNIOR SHOWCASE & FILTER SYSTEM */}
+                        {activeTab === 'junior' && (
+                            <div>
+                                {/* Search & Filter Panel */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                        <i data-lucide="sliders-horizontal" className="text-[#800000] w-5 h-5"></i>
+                                        คัดกรองพอร์ตโฟลิโอตามสถาบันและคณะเป้าหมาย
+                                    </h3>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        {/* Search Input */}
+                                        <div className="relative">
+                                            <label className="block text-xs font-medium text-slate-500 mb-1">คำค้นหาหลัก / ผลงานเด่น</label>
+                                            <div className="absolute inset-y-10 left-3 flex items-center pointer-events-none text-slate-400">
+                                                <i data-lucide="search" className="w-4 h-4"></i>
+                                            </div>
+                                            <input 
+                                                type="text" 
+                                                placeholder="ค้นตาม คณะ, ชื่อรุ่นพี่, ผลงาน..." 
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-[#800000]"
+                                            />
+                                        </div>
+
+                                        {/* University Filter */}
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-500 mb-1">สถาบันอุดมศึกษา ({universities.length - 1} แห่ง)</label>
+                                            <select 
+                                                value={selectedUni}
+                                                onChange={(e) => setSelectedUni(e.target.value)}
+                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                            >
+                                                <option value="all">ทั้งหมด (ทุกมหาวิทยาลัย)</option>
+                                                {Object.keys(UNI_COLORS).map((u, i) => (
+                                                    <option key={i} value={u}>{u}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {/* Faculty Filter */}
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-500 mb-1">กลุ่มคณะสาขา</label>
+                                            <select 
+                                                value={selectedFaculty}
+                                                onChange={(e) => setSelectedFaculty(e.target.value)}
+                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                            >
+                                                <option value="all">ทั้งหมด (ทุกคณะ)</option>
+                                                {faculties.filter(f => f !== 'all').map((f, i) => (
+                                                    <option key={i} value={f}>{f}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {/* Round Filter */}
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-500 mb-1">รอบที่คัดเลือก</label>
+                                            <select 
+                                                value={selectedRound}
+                                                onChange={(e) => setSelectedRound(e.target.value)}
+                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                            >
+                                                <option value="all">ทั้งหมด (ทุกรอบ)</option>
+                                                <option value="รอบ 1 Portfolio">รอบ 1 Portfolio</option>
+                                                <option value="รอบ 2 โควตา">รอบ 2 โควตา</option>
+                                                <option value="รอบอื่น ๆ">รอบอื่น ๆ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* Clear Filters indicator */}
+                                    {(searchQuery || selectedUni !== 'all' || selectedFaculty !== 'all' || selectedRound !== 'all') && (
+                                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-100">
+                                            <span className="text-xs text-slate-500">
+                                                พบคลังผลงานที่ตรงตามเงื่อนไข <strong className="text-[#800000]">{filteredPortfolios.length} เล่ม</strong>
+                                            </span>
+                                            <button 
+                                                onClick={() => {
+                                                    setSearchQuery('');
+                                                    setSelectedUni('all');
+                                                    setSelectedFaculty('all');
+                                                    setSelectedRound('all');
+                                                }}
+                                                className="text-xs text-rose-800 hover:underline flex items-center gap-1 font-medium"
+                                            >
+                                                <i data-lucide="rotate-ccw" className="w-3 h-3"></i> ล้างการกรองทั้งหมด
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Portfolios Grid - Adjusted to EXACTLY 3 COLUMNS (`grid-cols-1 md:grid-cols-3`) as requested */}
+                                {filteredPortfolios.length === 0 ? (
+                                    <div className="bg-white rounded-2xl border-2 border-dashed border-slate-300 p-12 text-center max-w-xl mx-auto my-8">
+                                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                                            <i data-lucide="folder-search" className="w-8 h-8"></i>
+                                        </div>
+                                        <h4 className="text-lg font-bold text-slate-800 mb-1">ไม่พบคลังพอร์ตที่กำลังค้นหา</h4>
+                                        <p className="text-sm text-slate-500">ลองเปลี่ยนการคัดกรอง หรือให้รุ่นพี่คนอื่นในรุ่นแชร์พอร์ตเพิ่มเข้ามาสิ!</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        {filteredPortfolios.map((port) => {
+                                            const uniStyle = UNI_COLORS[port.university] || { primary: '#800000', text: 'text-white' };
+                                            return (
+                                                <div 
+                                                    key={port.id}
+                                                    className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
+                                                >
+                                                    <div>
+                                                        {/* Card Header with real emblem & cover colors */}
+                                                        <div 
+                                                            style={{ backgroundColor: uniStyle.primary }} 
+                                                            className={`h-48 p-6 ${uniStyle.text} flex flex-col justify-between relative`}
+                                                        >
+                                                            {/* Round badge at Top Right */}
+                                                            <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold border border-white/20">
+                                                                {port.round}
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <UniversityEmblem name={port.university} size="w-10 h-10" />
+                                                                <span className="text-xs font-bold tracking-wide opacity-90 line-clamp-1 ml-1">{port.university}</span>
+                                                            </div>
+                                                            
+                                                            {/* Mini-Cover Graphic Frame inside the header header */}
+                                                            <div className="absolute bottom-4 right-4 w-[52px] h-[72px] rounded-lg shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:rotate-6 origin-bottom overflow-hidden border border-white/10 flex flex-col justify-between p-1.5 select-none" style={{ backgroundColor: uniStyle.primary }}>
+                                                                <div className="w-full flex items-center justify-between">
+                                                                    <div className="w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center p-0.5">
+                                                                        <div className="w-full h-full bg-slate-800 rounded-full"></div>
+                                                                    </div>
+                                                                    <div className="w-5 h-1 bg-white/40 rounded"></div>
+                                                                </div>
+                                                                <div className="w-full flex flex-col gap-0.5 mt-2">
+                                                                    <div className="w-full h-1 bg-white/30 rounded"></div>
+                                                                    <div className="w-8 h-1 bg-white/20 rounded"></div>
+                                                                </div>
+                                                                <div className="w-full flex justify-end">
+                                                                    <span className="text-[6px] text-white/60 uppercase font-mono tracking-tighter">B.S.</span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Faculty Badge moved ABOVE the main title as requested */}
+                                                            <div className="pr-[72px]">
+                                                                <div className="mb-1.5">
+                                                                    <span className="text-[10px] uppercase font-bold bg-white/20 px-2 py-0.5 rounded border border-white/20">
+                                                                        {port.faculty}
+                                                                    </span>
+                                                                </div>
+                                                                <h4 className="text-sm sm:text-base font-bold leading-tight group-hover:text-amber-200 transition-colors line-clamp-2">
+                                                                    {port.title}
+                                                                </h4>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Card Body - Name and Study track integrated sequentially as requested */}
+                                                        <div className="p-5">
+                                                            {/* Owner Profile summary with Track integrated inside parentheses */}
+                                                            <div className="flex justify-between items-center mb-4 pb-4 border-b border-slate-100">
+                                                                <div>
+                                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">เจ้าของพอร์ต</p>
+                                                                    <h5 className="text-xs sm:text-sm font-semibold text-slate-800 leading-snug">
+                                                                        {port.seniorName} ({port.track})
+                                                                    </h5>
+                                                                </div>
+                                                                <div className="text-right shrink-0 ml-2">
+                                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">เกรดเฉลี่ย</p>
+                                                                    <span className="inline-block text-xs sm:text-sm font-bold text-slate-800 bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200">
+                                                                        {port.gpa}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Highlights bullets preview */}
+                                                            <div>
+                                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">ผลงาน/กิจกรรมเด่น</p>
+                                                                <ul className="space-y-1.5">
+                                                                    {port.highlights.slice(0, 2).map((hl, index) => (
+                                                                        <li key={index} className="text-xs text-slate-600 flex items-start gap-2 leading-relaxed">
+                                                                            <span className="inline-block w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: uniStyle.primary }}></span>
+                                                                            <span className="line-clamp-1">{hl}</span>
+                                                                        </li>
+                                                                    ))}
+                                                                    {port.highlights.length > 2 && (
+                                                                        <li className="text-[11px] font-medium pl-3.5" style={{ color: uniStyle.primary }}>
+                                                                            + อีก {port.highlights.length - 2} ผลงานหลักในเล่ม...
+                                                                        </li>
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Card Action footer matching image design */}
+                                                    <div className="p-5 pt-0">
+                                                        <button 
+                                                            onClick={() => setSelectedPort(port)}
+                                                            className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-all rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200"
+                                                        >
+                                                            <i data-lucide="eye" className="w-3.5 h-3.5 text-slate-500"></i>
+                                                            เปิดพรีวิวดูโครงสร้างพอร์ตตัวจริง
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* TAB 2: SENIOR PORTFOLIO SUBMISSION FORM */}
+                        {activeTab === 'senior' && (
+                            <div className="max-w-3xl mx-auto">
+                                {formFeedback === 'success' ? (
+                                    <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl p-8 text-center shadow-sm">
+                                        <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i data-lucide="check-circle-2" className="w-10 h-10"></i>
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-2">ส่งข้อมูลพอร์ตเรียบร้อยแล้วครับพี่สิทธิ์เก่า บ.ส.!</h3>
+                                        <p className="text-sm text-emerald-600 max-w-md mx-auto mb-6">
+                                            ข้อมูลพอร์ตถูกส่งเข้าไปหลังบ้านเพื่อให้อาจารย์และผู้ดูแลระบบตรวจสอบความปลอดภัย (PDPA) และความเหมาะสม เมื่อเรียบร้อยแล้วระบบจะนำขึ้นเผยแพร่บนบอร์ดแสดงพอร์ตทันทีครับ
+                                        </p>
+                                        <div className="flex justify-center gap-3">
+                                            <button 
+                                                onClick={() => setFormFeedback('')}
+                                                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow transition-all"
+                                            >
+                                                ส่งผลงานเพิ่มอีกเล่ม
+                                            </button>
+                                            <button 
+                                                onClick={() => setActiveTab('junior')}
+                                                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-sm transition-all"
+                                            >
+                                                กลับไปหน้าคลังพอร์ต
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleSubmitPortfolio} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                                        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100">
+                                            <div className="w-12 h-12 bg-rose-50 text-[#800000] rounded-xl flex items-center justify-center">
+                                                <i data-lucide="share-2" className="w-6 h-6"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-bold text-slate-800">ส่งต่อแรงบันดาลใจจากพี่เบญจมฯ สู่น้อง บ.ส.</h3>
+                                                <p className="text-xs text-slate-500">กรอกประวัติการสอบติดและข้อมูลผลงานเพื่อให้น้องๆ ค้นหาและเรียนรู้</p>
+                                            </div>
+                                        </div>
+
+                                        {/* PDPA CRITICAL COMPLIANCE NOTICE */}
+                                        <div className="mb-6 bg-rose-50 border border-rose-100 rounded-xl p-4 text-xs text-rose-900 leading-relaxed">
+                                            <h4 className="font-bold flex items-center gap-1.5 mb-2 text-rose-950">
+                                                <i data-lucide="shield-alert" className="w-4 h-4 text-rose-800"></i>
+                                                ข้อตกลงเรื่องความปลอดภัยของข้อมูลส่วนบุคคล (PDPA Warning!)
+                                            </h4>
+                                            <p className="mb-2">
+                                                เนื่องจากพอร์ตโฟลิโอส่วนใหญ่มักมีข้อมูลที่ละเอียดอ่อน เช่น <strong>เลขบัตรประชาชน, ที่อยู่อาศัย, เบอร์โทรศัพท์ส่วนตัว และอีเมล</strong> เพื่อความปลอดภัย กรุณาทำการปิดบังหรือเซนเซอร์ข้อมูลเหล่านี้จากภาพหรือไฟล์ก่อนทำการยื่นเข้าระบบ
+                                            </p>
+                                            <div className="flex items-start gap-2 mt-3 bg-white/60 p-2.5 rounded border border-rose-200/50">
+                                                <input 
+                                                    type="checkbox" 
+                                                    id="pdpaWarn" 
+                                                    checked={pdpaWarningAccepted}
+                                                    onChange={(e) => setPdpaWarningAccepted(e.target.checked)}
+                                                    className="mt-0.5 rounded text-[#800000] focus:ring-[#800000]"
+                                                />
+                                                <label htmlFor="pdpaWarn" className="font-semibold text-rose-950 cursor-pointer">
+                                                    ข้าพเจ้าขอยืนยันว่าได้ปิดบังและเซนเซอร์ข้อมูลส่วนตัวที่สำคัญ (เลขบัตรประชาชน, เบอร์โทร, ที่อยู่) ในไฟล์เรียบร้อยแล้ว *
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {/* Core Fields */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">ชื่อจริง - นามสกุล (หรือใช้นามสมมติได้) *</label>
+                                                <input 
+                                                    type="text" 
+                                                    required
+                                                    placeholder="เช่น พี่นนท์ (บ.ส.39)" 
+                                                    value={formName}
+                                                    onChange={(e) => setFormName(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">ชื่อเล่น (เพื่อความเป็นกันเอง)</label>
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="เช่น นนท์" 
+                                                    value={formNickname}
+                                                    onChange={(e) => setFormNickname(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">สายการเรียนตอน ม.ปลาย *</label>
+                                                <select 
+                                                    value={formTrack}
+                                                    onChange={(e) => setFormTrack(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                >
+                                                    <option value="วิทย์-คณิต(Gifted)">วิทย์-คณิต(Gifted)</option>
+                                                    <option value="วิทย์-คณิต">วิทย์-คณิต</option>
+                                                    <option value="คณิต-อังกฤษ">คณิต-อังกฤษ</option>
+                                                    <option value="อังกฤษ-ธุรกิจ">อังกฤษ-ธุรกิจ</option>
+                                                    <option value="เทคโนโลยีซอฟแวร์และหุ่นยนต์">เทคโนโลยีซอฟแวร์และหุ่นยนต์</option>
+                                                    <option value="มัลติมีเดียและภาพยนต์">มัลติมีเดียและภาพยนต์</option>
+                                                    <option value="ฝรั่งเศส-อังกฤษ">ฝรั่งเศส-อังกฤษ</option>
+                                                    <option value="สื่อสารมวลชนและสังคมศาสตร์">สื่อสารมวลชนและสังคมศาสตร์</option>
+                                                    <option value="ญี่ปุ่น-อังกฤษ">ญี่ปุ่น-อังกฤษ</option>
+                                                    <option value="จีน-อังกฤษ">จีน-อังกฤษ</option>
+                                                    <option value="พละ-อังกฤษ">พละ-อังกฤษ</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">เกรดเฉลี่ยสะสม (GPAX)</label>
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="เช่น 3.85" 
+                                                    value={formGpa}
+                                                    onChange={(e) => setFormGpa(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                                            <div className="md:col-span-1">
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">มหาวิทยาลัยที่ผ่านการคัดเลือก *</label>
+                                                <select 
+                                                    value={formUni}
+                                                    onChange={(e) => setFormUni(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                >
+                                                    {Object.keys(UNI_COLORS).map((u, i) => (
+                                                        <option key={i} value={u}>{u}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">คณะที่สังกัด *</label>
+                                                <select 
+                                                    value={formFaculty}
+                                                    onChange={(e) => setFormFaculty(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                >
+                                                    <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
+                                                    <option value="วิทยาศาสตร์ / เทคโนโลยีสารสนเทศ">วิทยาศาสตร์ / เทคโนโลยีสารสนเทศ</option>
+                                                    <option value="แพทยศาสตร์">แพทยศาสตร์</option>
+                                                    <option value="พยาบาลศาสตร์ / สาธารณสุข">พยาบาลศาสตร์ / สาธารณสุข</option>
+                                                    <option value="ศิลปศาสตร์ / อักษรศาสตร์">ศิลปศาสตร์ / อักษรศาสตร์</option>
+                                                    <option value="บริหารธุรกิจ / บัญชี">บริหารธุรกิจ / บัญชี</option>
+                                                    <option value="สถาปัตยกรรมและการออกแบบ">สถาปัตยกรรมและการออกแบบ</option>
+                                                    <option value="ศึกษาศาสตร์ / ครุศาสตร์">ศึกษาศาสตร์ / ครุศาสตร์</option>
+                                                    <option value="รัฐศาสตร์ / นิติศาสตร์">รัฐศาสตร์ / นิติศาสตร์</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">สาขาวิชา / เอก *</label>
+                                                <input 
+                                                    type="text" 
+                                                    required
+                                                    placeholder="เช่น ออกแบบภายใน, เทคโนโลยีสารสนเทศ" 
+                                                    value={formMajor}
+                                                    onChange={(e) => setFormMajor(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">รอบคัดเลือกที่ติดพอร์ต *</label>
+                                                <select 
+                                                    value={formRound}
+                                                    onChange={(e) => setFormRound(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                >
+                                                    <option value="รอบ 1 Portfolio">รอบ 1 Portfolio</option>
+                                                    <option value="รอบ 2 โควตา">รอบ 2 โควตา</option>
+                                                    <option value="รอบอื่น ๆ">รอบอื่น ๆ</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">หัวข้อหน้าปกพอร์ต (หรือชื่อพอร์ตน่าสนใจ)</label>
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="เช่น พอร์ตฟอลิโอวิศวะสไตล์มินิมอล" 
+                                                    value={formTitle}
+                                                    onChange={(e) => setFormTitle(e.target.value)}
+                                                    className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Theme Visual Preview Label with Real Logo */}
+                                        <div className="mb-6 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                                            <span className="text-xs font-semibold text-slate-500 block mb-2">พรีวิวธีมสีการ์ดและตรามหาวิทยาลัยจริง:</span>
+                                            <div className="flex items-center gap-3">
+                                                <div 
+                                                    style={{ backgroundColor: UNI_COLORS[formUni]?.primary || '#800000' }} 
+                                                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md border border-white/20 p-1"
+                                                >
+                                                    <UniversityEmblem name={formUni} size="w-10 h-10" />
+                                                </div>
+                                                <div>
+                                                    <span className="text-sm font-bold text-slate-800 block">{formUni}</span>
+                                                    <span className="text-[10px] text-slate-400">ตราและโทนสีจะถูกจัดระดับให้โดยอัตโนมัติ</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Rich Text Areas */}
+                                        <div className="mb-6">
+                                            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">ผลงาน / กิจกรรมไฮไลท์หลัก (กรอกทีละหัวข้อ 1 บรรทัด) *</label>
+                                            <textarea 
+                                                required
+                                                rows="3"
+                                                placeholder="รางวัลชนะเลิศการประกวด...&#10;ประธานสภานักเรียนโรงเรียนเบญจมราชานุสรณ์...&#10;ผ่านการทำโครงงานพัฒนาแอป..."
+                                                value={formHighlights}
+                                                onChange={(e) => setFormHighlights(e.target.value)}
+                                                className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] font-mono text-xs"
+                                            ></textarea>
+                                        </div>
+
+                                        <div className="mb-6">
+                                            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">ข้อความแนะนำน้อง ๆ บ.ส. (คำแนะนำ, แหล่งเตรียมตัว, ทริคเตรียมพอร์ต)</label>
+                                            <textarea 
+                                                rows="4"
+                                                placeholder="เน้นเล่าเรื่องความสำคัญและวิธีรับมือเวลาเจอกรรมการสัมภาษณ์..."
+                                                value={formTips}
+                                                onChange={(e) => setFormTips(e.target.value)}
+                                                className="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                            ></textarea>
+                                        </div>
+
+                                        {/* PDPA Final Consent checkbox */}
+                                        <div className="flex items-start gap-2.5 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <input 
+                                                type="checkbox" 
+                                                id="pdpaConsent" 
+                                                required
+                                                checked={pdpaConsent}
+                                                onChange={(e) => setPdpaConsent(e.target.checked)}
+                                                className="mt-0.5 rounded text-[#800000] focus:ring-[#800000]"
+                                            />
+                                            <label htmlFor="pdpaConsent" className="text-xs text-slate-600 leading-relaxed cursor-pointer">
+                                                ข้าพเจ้ายินยอมให้เปิดเผยข้อมูลผลงานทางการศึกษาเหล่านี้ในแพลตฟอร์มภายในโรงเรียนเบญจมราชานุสรณ์ เพื่อเป็นสถิติและกรณีศึกษาแก่เยาวชนรุ่นหลังอย่างสมัครใจ *
+                                            </label>
+                                        </div>
+
+                                        {/* Submit Button */}
+                                        <button 
+                                            type="submit"
+                                            disabled={!pdpaWarningAccepted || !pdpaConsent}
+                                            className={`w-full py-3 rounded-xl font-bold text-sm shadow transition-all flex items-center justify-center gap-2 ${(!pdpaWarningAccepted || !pdpaConsent) ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-[#800000] hover:bg-rose-950 text-white'}`}
+                                        >
+                                            <i data-lucide="send" className="w-4 h-4"></i>
+                                            ส่งพอร์ตเข้าคลังระบบ (จำลองตรวจสอบหลังบ้านก่อนแสดงผล)
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+                        )}
+
+                        {/* TAB 3: AI PORT ADVISOR CHATBOT */}
+                        {activeTab === 'ai-helper' && (
+                            <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-6 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[550px]">
+                                {/* Left column: AI Helper info card */}
+                                <div className="md:w-1/3 bg-[#800000] text-white p-6 md:p-8 flex flex-col justify-between border-r border-amber-500/30 bg-pattern">
+                                    <div>
+                                        <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/20 text-amber-300">
+                                            <i data-lucide="sparkles" className="w-6 h-6"></i>
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-2">พี่แนะแนวอัจฉริยะ (AI Port Advisor)</h3>
+                                        <p className="text-xs text-rose-100 leading-relaxed">
+                                            ระบบผู้ช่วย AI ที่ได้รับการเทรนข้อมูลให้เข้าใจระบบคัดเลือกรอบ Portfolio ทั้ง 14 สถาบันชั้นนำ เช่น จุฬาฯ มศว บางมด ศิลปากร เพาะช่าง ฯลฯ ช่วยจัดกลุ่ม และแนะนำการจัดเตรียมโครงสร้างพอร์ต บ.ส. ได้ทันใจ
+                                        </p>
+                                    </div>
+                                    <div className="mt-8 bg-black/25 p-4 rounded-xl border border-white/10 text-xs">
+                                        <h4 className="font-semibold text-amber-300 mb-1 flex items-center gap-1">
+                                            <i data-lucide="info" class="w-3.5 h-3.5"></i> ข้อเสนอแนะยอดฮิต:
+                                        </h4>
+                                        <ul className="space-y-1.5 text-rose-100 list-disc list-inside">
+                                            <li>"อยากเข้าออกแบบภายใน ศิลปากร ต้องเก็บบอร์ดผลงานแบบไหน?"</li>
+                                            <li>"ช่วยวางแผนเตรียมพอร์ตวิทยาลัยเพาะช่าง คณะศิลปะ"</li>
+                                            <li>"เกรด 3.5 ยื่นสาธารณสุข ม.พะเยา ดีไหม?"</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Right column: Chat Interface */}
+                                <div className="flex-1 flex flex-col justify-between p-6">
+                                    <div className="flex-1 overflow-y-auto max-h-[350px] space-y-4 mb-4 pr-2">
+                                        {aiHistory.map((chat, idx) => (
+                                            <div 
+                                                key={idx}
+                                                className={`flex items-start gap-2.5 ${chat.sender === 'user' ? 'flex-row-reverse' : ''}`}
+                                            >
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs shrink-0 font-bold ${chat.sender === 'user' ? 'bg-amber-400 text-slate-800' : 'bg-[#800000] text-white'}`}>
+                                                    {chat.sender === 'user' ? 'น้อง' : 'พี่'}
+                                                </div>
+                                                <div className={`max-w-[80%] rounded-2xl p-3 text-sm leading-relaxed whitespace-pre-wrap ${chat.sender === 'user' ? 'bg-amber-100 text-slate-800 rounded-tr-none' : 'bg-slate-100 text-slate-800 rounded-tl-none'}`}>
+                                                    {chat.text}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {aiLoading && (
+                                            <div className="flex items-start gap-2.5">
+                                                <div className="w-8 h-8 rounded-full bg-[#800000] text-white flex items-center justify-center text-xs shrink-0 animate-pulse font-bold">
+                                                    พี่
+                                                </div>
+                                                <div className="bg-slate-100 text-slate-500 rounded-2xl rounded-tl-none p-3 text-sm flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                                                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                                                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                                                    พี่แนะแนวกำลังวิเคราะห์ข้อมูลและเกณฑ์รับสมัครของมหาวิทยาลัย...
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Chat Form */}
+                                    <form onSubmit={handleAskAI} className="border-t border-slate-100 pt-4 flex gap-2">
+                                        <input 
+                                            type="text" 
+                                            placeholder="พิมพ์แชทปรึกษาเรื่องเตรียมพอร์ตกับพี่แนะแนวตรงนี้..." 
+                                            value={aiQuestion}
+                                            onChange={(e) => setAiQuestion(e.target.value)}
+                                            className="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000]"
+                                        />
+                                        <button 
+                                            type="submit"
+                                            disabled={aiLoading}
+                                            className="px-5 bg-[#800000] hover:bg-rose-950 text-white rounded-xl font-bold text-sm shadow flex items-center justify-center gap-1 transition-all disabled:opacity-50"
+                                        >
+                                            <i data-lucide="send-horizontal" className="w-4 h-4"></i>
+                                            ส่งคำถาม
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 4: ADMIN PANEL */}
+                        {activeTab === 'admin' && (
+                            <div>
+                                {!isAdminLoggedIn ? (
+                                    /* ADMIN PASSWORD GATEKEEPER VIEW */
+                                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 max-w-md mx-auto text-center my-8">
+                                        <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-200">
+                                            <i data-lucide="shield-alert" className="w-8 h-8 animate-pulse"></i>
+                                        </div>
+                                        <h4 className="text-lg font-bold text-slate-800 mb-1">ยืนยันสิทธิ์ผู้ดูแลระบบ (Admin Required)</h4>
+                                        <p className="text-xs text-slate-500 mb-6">ความปลอดภัยสูงสุดจำลองการเข้าใช้ Sandbox ตรวจสอบรูปภาพและเนื้อหา</p>
+                                        
+                                        <form onSubmit={handleAdminLogin} className="space-y-4">
+                                            <div className="relative">
+                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                                    <i data-lucide="key-round" class="w-4 h-4"></i>
+                                                </span>
+                                                <input 
+                                                    type="password" 
+                                                    required
+                                                    value={adminPassword}
+                                                    onChange={(e) => setAdminPassword(e.target.value)}
+                                                    placeholder="กรอกรหัสผ่านเพื่อทดสอบระบบ (เช่น 1234)" 
+                                                    className="w-full pl-9 pr-4 py-2.5 border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 text-slate-800 rounded-xl text-sm outline-none transition-all"
+                                                />
+                                            </div>
+                                            <button 
+                                                type="submit" 
+                                                className="w-full py-2.5 bg-[#800000] hover:bg-rose-950 text-white font-bold rounded-xl text-sm transition-all shadow shadow-red-950/20"
+                                            >
+                                                ล็อกอินเข้าหลังบ้านแอดมิน
+                                            </button>
+                                            <p className="text-[10px] text-slate-400 italic">💡 สำหรับพรีเซนต์จำลองเดโม่ สามารถพิมพ์รหัสอะไรก็ได้ลงไปเพื่อกดตกลงผ่านด่านได้เลยครับ!</p>
+                                        </form>
+                                    </div>
+                                ) : (
+                                    /* ACTUAL MODERATION TABLE */
+                                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                                            <div>
+                                                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                                    <i data-lucide="lock-open" className="text-emerald-600 w-5 h-5"></i>
+                                                    ระบบคัดกรองพอร์ตหลังบ้าน (Admin Moderation Platform)
+                                                </h3>
+                                                <p className="text-xs text-slate-500 mt-1">ปลดล็อกระบบ Sandbox สำหรับตรวจวิเคราะห์และการปกปิดข้อมูลส่วนบุคคลเรียบร้อย</p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="bg-rose-50 text-rose-900 border border-rose-200 text-xs px-3 py-1 rounded-full font-semibold">
+                                                    รอนุมัติ: <strong className="text-amber-600">{portfolios.filter(p => p.status === 'pending').length} เล่ม</strong>
+                                                </span>
+                                                <button 
+                                                    onClick={() => setIsAdminLoggedIn(false)}
+                                                    className="text-xs text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 transition-all font-semibold flex items-center gap-1"
+                                                >
+                                                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                                                    ล็อกเอาท์แอดมิน
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {portfolios.filter(p => p.status === 'pending').length === 0 ? (
+                                            <div className="text-center py-12 max-w-md mx-auto">
+                                                <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                    <i data-lucide="inbox" className="w-6 h-6"></i>
+                                                </div>
+                                                <h4 className="font-bold text-slate-700 text-sm">ไม่มีคำขอยื่นเผยแพร่พอร์ตโฟลิโอตกค้าง</h4>
+                                                <p className="text-xs text-slate-500 mt-1">ระบบอยู่ในสถานะอัปเดตปัจจุบันและพร้อมตรวจสอบผลงานถัดไปทันที</p>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-6">
+                                                {portfolios.filter(p => p.status === 'pending').map((port) => (
+                                                    <div 
+                                                        key={port.id}
+                                                        className="border border-amber-200 bg-amber-50/20 rounded-2xl p-5 md:p-6 flex flex-col md:flex-row justify-between gap-6"
+                                                    >
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2.5 flex-wrap">
+                                                                <span className="bg-[#800000] text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                                                    {port.round}
+                                                                </span>
+                                                                <span className="bg-amber-400/20 text-amber-900 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                                                    <i data-lucide="shield-alert" className="w-3 h-3"></i> {port.hasPdpaChecked ? 'รุ่นพี่ยืนยันผ่านด่านตรวจสอบ PDPA แล้ว' : 'ยังไม่ได้ตรวจสอบ'}
+                                                                </span>
+                                                                <span className="text-xs text-slate-400">ส่งโดย: {port.seniorName} • แผนการเรียน: {port.track}</span>
+                                                            </div>
+
+                                                            <h4 className="text-base font-bold text-slate-800 mt-3">{port.title}</h4>
+                                                            <p className="text-xs text-[#800000] font-semibold mt-1">เป้าหมายคัดเลือก: {port.university} | คณะ{port.faculty} (สาขา{port.major})</p>
+
+                                                            {/* Highlights Details */}
+                                                            <div className="mt-4 bg-white p-4 rounded-xl border border-slate-200">
+                                                                <h5 className="text-xs font-bold text-slate-600 uppercase mb-2">สรุปผลงานสำคัญในไฟล์พอร์ต:</h5>
+                                                                <ul className="space-y-1">
+                                                                    {port.highlights.map((hl, idx) => (
+                                                                        <li key={idx} className="text-xs text-slate-600 flex items-start gap-2">
+                                                                            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-1.5 shrink-0"></span>
+                                                                            <span>{hl}</span>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+
+                                                            {/* Advice Preview */}
+                                                            {port.tips && (
+                                                                <div className="mt-3 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-lg border border-slate-200">
+                                                                    <strong>คำแนะนำที่แนบมา:</strong> "{port.tips}"
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Approval CTA Box */}
+                                                        <div className="md:w-48 shrink-0 flex flex-col gap-2 justify-center border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
+                                                            <button 
+                                                                onClick={() => handleApprove(port.id)}
+                                                                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-all"
+                                                            >
+                                                                <i data-lucide="check" className="w-4 h-4"></i>
+                                                                อนุมัติพอร์ตขึ้นเว็บ
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => handleReject(port.id)}
+                                                                className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-all"
+                                                            >
+                                                                <i data-lucide="x" className="w-4 h-4"></i>
+                                                                ไม่อนุมัติ / ลบออก
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                    </main>
+
+                    {/* MODAL: PORTFOLIO DETAILED PREVIEW */}
+                    {selectedPort && (
+                        <div className="fixed inset-0 bg-slate-900/75 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+                            <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl overflow-hidden border border-slate-200 flex flex-col md:flex-row max-h-[90vh]">
+                                
+                                {/* Left Side: Mock Page Preview Frame */}
+                                <div className="md:w-1/2 bg-slate-900 p-6 flex flex-col justify-between text-white overflow-y-auto">
+                                    <div>
+                                        <div className="flex justify-between items-center mb-6">
+                                            <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider bg-white/10 px-2 py-1 rounded border border-white/20">
+                                                โครงสร้างหน้าเล่มพอร์ตจำลอง
+                                            </span>
+                                            <span className="text-xs text-slate-400">พรีวิวสารบัญในเล่ม</span>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {selectedPort.pagePreviews && selectedPort.pagePreviews.map((page, idx) => {
+                                                const coverCol = UNI_COLORS[selectedPort.university]?.primary || '#800000';
+                                                return (
+                                                    <div key={idx} className="bg-slate-800 rounded-xl border border-slate-700 p-4 hover:border-amber-400 cursor-pointer transition-all">
+                                                        <div className="flex gap-3 items-center">
+                                                            <div 
+                                                                style={{ backgroundColor: idx === 0 ? coverCol : '#f1f5f9' }}
+                                                                className={`w-12 h-16 rounded-md flex items-center justify-center text-[10px] font-extrabold ${idx === 0 ? 'text-white' : 'text-slate-700'} text-center shadow p-1 shrink-0`}
+                                                            >
+                                                                หน้า {idx + 1}
+                                                            </div>
+                                                            <div>
+                                                                <h5 className="text-sm font-semibold text-slate-100">{page.title}</h5>
+                                                                <p className="text-xs text-slate-400 mt-0.5">{page.desc}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500 text-center flex items-center justify-center gap-2">
+                                        <UniversityEmblem name={selectedPort.university} size="w-6 h-6" />
+                                        <span>ดีไซน์ต้นแบบระบบคลังสถิติเบญจมราชานุสรณ์</span>
+                                    </div>
+                                </div>
+
+                                {/* Right Side: Portfolio Info details */}
+                                <div className="flex-1 p-6 md:p-8 overflow-y-auto flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex justify-between items-start gap-4 mb-4">
+                                            <div>
+                                                <span 
+                                                    style={{ backgroundColor: UNI_COLORS[selectedPort.university]?.primary || '#800000' }} 
+                                                    className="text-xs font-semibold text-white px-2.5 py-1 rounded-full"
+                                                >
+                                                    {selectedPort.round}
+                                                </span>
+                                                <h3 className="text-xl font-bold text-slate-800 mt-3">{selectedPort.title}</h3>
+                                            </div>
+                                            <button 
+                                                onClick={() => setSelectedPort(null)}
+                                                className="w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full flex items-center justify-center transition-all shrink-0"
+                                            >
+                                                <i data-lucide="x" className="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                                            <div>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase">มหาวิทยาลัยปลายทาง</p>
+                                                <div className="text-sm font-bold text-slate-800 flex items-center gap-1.5 mt-0.5">
+                                                    <UniversityEmblem name={selectedPort.university} size="w-5 h-5" />
+                                                    <span className="ml-1 leading-none">{selectedPort.university}</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase">คณะ / ภาควิชา</p>
+                                                <p className="text-sm font-bold text-slate-800">{selectedPort.faculty}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase">สายการเรียน</p>
+                                                <p className="text-sm font-semibold text-slate-800">{selectedPort.track}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase">เกรดเฉลี่ย (GPAX)</p>
+                                                <p className="text-sm font-bold text-slate-800">{selectedPort.gpa}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Highlights list */}
+                                        <div className="mb-6">
+                                            <h4 className="text-xs font-bold text-slate-600 uppercase mb-2.5 tracking-wider">ผลงาน/กิจกรรมที่โดนใจกรรมการ (Highlights)</h4>
+                                            <ul className="space-y-2">
+                                                {selectedPort.highlights.map((hl, idx) => (
+                                                    <li key={idx} className="text-xs text-slate-700 bg-emerald-50/50 border border-emerald-100/50 p-2.5 rounded-lg flex items-start gap-2">
+                                                        <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                                        <span>{hl}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        {/* Senior Tips */}
+                                        <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs text-amber-900 leading-relaxed">
+                                            <h5 className="font-bold mb-1 flex items-center gap-1 text-amber-950">
+                                                <i data-lucide="quote" className="w-3.5 h-3.5"></i>
+                                                เทคนิคการเตรียมผลงานจาก พี่{selectedPort.nickname || selectedPort.seniorName} :
+                                            </h5>
+                                            <p className="italic">"{selectedPort.tips}"</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Modal Action footer */}
+                                    <div className="mt-8 pt-4 border-t border-slate-100 flex gap-3">
+                                        <button 
+                                            onClick={() => {
+                                                triggerNotification(
+                                                    'จำลองการเข้าถึงสำเร็จ!',
+                                                    `ระบบจำลองความพยายามเชื่อมต่อไปยังคลังไฟล์ Google Drive เพื่อเปิดดูเล่มผลงานจริงของพี่ ${selectedPort.seniorName} ซึ่งได้รับอนุญาตเผยแพร่เฉพาะภายในสถาบัน บ.ส.`,
+                                                    'success'
+                                                );
+                                            }}
+                                            className="flex-1 py-3 bg-[#800000] hover:bg-rose-950 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md"
+                                        >
+                                            <i data-lucide="download" className="w-4 h-4"></i>
+                                            เปิดลิงก์เล่มจริง (Mock Drive)
+                                        </button>
+                                        <button 
+                                            onClick={() => setSelectedPort(null)}
+                                            className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs transition-all border border-slate-200"
+                                        >
+                                            ปิดหน้าต่าง
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ELEGANT CUSTOM DIALOG / NOTIFICATION DIALOG OVERLAY */}
+                    {notification && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+                            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 text-center">
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${notification.type === 'success' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                                    <i data-lucide={notification.type === 'success' ? "check-circle" : "info"} className="w-6 h-6"></i>
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800 mb-2">{notification.title}</h3>
+                                <p className="text-sm text-slate-600 mb-6 leading-relaxed">{notification.message}</p>
+                                <button 
+                                    onClick={() => setNotification(null)}
+                                    className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition-all w-full"
+                                >
+                                    ตกลง รับทราบ
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-white py-8 px-4 mt-12 border-t border-slate-800">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="text-center md:text-left">
+                                <h4 className="text-sm font-bold text-amber-400">B.S. Portfolio Hub Prototype</h4>
+                                <p className="text-xs text-slate-400 mt-1">โครงงานนำเสนอสถิติและการเตรียมตัวเรียนต่อของสภานักเรียน โรงเรียนเบญจมราชานุสรณ์ นนทบุรี</p>
+                            </div>
+                            <div className="text-xs text-slate-500">
+                                © 2026 Benjamarachanusorn School Portfolio Hub. All Rights Reserved.
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
