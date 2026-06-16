@@ -1,3 +1,4 @@
+:B.S. Portfolio Hub:index.html
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -56,6 +57,9 @@
     <script type="text/babel">
         const { useState, useMemo, useEffect } = React;
 
+        // 🌟 [สำคัญ] นำ Web App URL ที่ก๊อปปี้มาจาก Google Apps Script มาใส่แทนค่าว่างตรงนี้ครับน้า
+        const GOOGLE_SCRIPT_URL = ""; 
+
         // Brand colors definitions for each University
         const UNI_COLORS = {
             'จุฬาลงกรณ์มหาวิทยาลัย': { primary: '#DF1995', text: 'text-white', badge: 'bg-[#DF1995]' },
@@ -113,6 +117,7 @@
                 tips: 'เน้นย้ำเรื่องงานแก้ปัญหาจริงครับ ในพอร์ตให้พยายามบอกว่าโครงการที่เราทำแก้ปัญหาอะไร ไม่ใช่แค่ทำตามคำสั่ง และสรุปผลลัพธ์เป็นตัวเลขเด่น ๆ ให้ชัดเจน!',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'เน้นสีชมพูจุฬาฯ และผลงานเด่น', color: 'bg-pink-700' },
                     { title: 'ประวัติส่วนตัว (Profile)', desc: 'ทักษะโปรแกรมมิ่ง และเกรดสะสม', color: 'bg-slate-100' },
@@ -139,6 +144,7 @@
                 tips: 'พอร์ตสายศิลปะการแสดงต้องเน้นภาพถ่ายที่สื่ออารมณ์ และจัดหน้าให้อ่านง่าย สะอาดตา อย่าลืมใส่ลิงก์คลิปวิดีโอแสดงผลงานสั้น ๆ ผ่าน QR Code ด้วยนะคะ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'แนวอาร์ตเวิร์กโมเดิร์น ธีมส้มแสดบางมด', color: 'bg-orange-600' },
                     { title: 'Statement of Purpose', desc: 'เรียงความความมุ่งมั่น 1 หน้ากระดาษ', color: 'bg-slate-100' },
@@ -165,6 +171,7 @@
                 tips: 'สำคัญที่สุดสำหรับสายแพทย์คือ "ความเป็นมนุษย์และจิตสาธารณะ" พยายามโชว์เคสงานจิตอาสาและสะท้อนคิด (Reflection) ว่าเราได้เรียนรู้อะไรจากการฝึกงานและค่ายนั้น ๆ ครับ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'เรียบร้อย สะอาดตา ธีมเทา-แดง', color: 'bg-rose-900' },
                     { title: 'ประสบการณ์โรงพยาบาล', desc: 'สรุปสิ่งที่เรียนรู้จากวอร์ดศัลยกรรม', color: 'bg-slate-100' },
@@ -190,6 +197,7 @@
                 tips: 'สายไอทีสิ่งที่ดึงดูดที่สุดคือลิงก์ผลงานจริง (GitHub หรือ URL ที่กดได้) ผมแคปหน้าจอ UI ของแอปสวย ๆ มาใส่ และเน้นอธิบายวิธีพัฒนาและการแก้บั๊กครับ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'ดีไซน์สายโค้ดดิ่ง เขียว ม.ก.', color: 'bg-emerald-800' },
                     { title: 'ทักษะโปรแกรมมิ่ง', desc: 'ระบุภาษาภาษา JS, Python, HTML', color: 'bg-slate-100' },
@@ -215,6 +223,7 @@
                 tips: 'สจล. เน้นความถนัดทางวิชาชีพและกิจกรรมเชิงปฏิบัติจริงครับ ในส่วนพอร์ตฟอลิโอให้ใส่ข้อมูลวิชาการคู่กับภาพแอคชั่นตอนกำลังทำโครงงานหรือทดลอง เพื่อแสดงความกระตือรือร้น!',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สีแสดเอกลักษณ์ของ สจล. สะดุดตา', color: 'bg-orange-600' },
                     { title: 'ประวัติและผลงานเด่น', desc: 'ผลงานระดับชาติเชิงนวัตกรรมสุขภาพ', color: 'bg-slate-100' },
@@ -240,6 +249,7 @@
                 tips: 'มจพ. ขึ้นชื่อเรื่องการปฏิบัติจริงครับ ถ้ามีเกียรติบัตรการทดสอบฝีมือ ใบผ่านค่ายเทคนิคคอมพิวเตอร์ หรือลิงก์โครงงานเชิงลึกที่มีซอร์สโค้ดให้สแกนจะถูกใจกรรมการสอบสัมภาษณ์มาก ๆ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'ดีไซน์สายเอนจิเนียร์ แดง-เหลือง มจพ.', color: 'bg-amber-800' },
                     { title: 'ผลงานโครงงานระบบเครือข่าย', desc: 'ผังระบบเชื่อมต่อจำลองสำหรับโรงเรียน', color: 'bg-slate-100' },
@@ -265,6 +275,7 @@
                 tips: 'พอร์ตมีเดียบางมดเน้นคุณค่าของการเล่าเรื่องและทักษะการออกแบบที่ใช้งานได้จริงค่ะ ควรโชว์กระบวนการคิด (Design Process) ตั้งแต่ Sketch จนถึงงาน Final ในพอร์ตให้ชัดเจนค่ะ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'แนวอาร์ตเวิร์กโมเดิร์น ธีมส้มแสดบางมด', color: 'bg-orange-600' },
                     { title: 'รวมผลงานออกแบบ (Portfolio)', desc: 'โลโก้และสื่อโฆษณาประชาสัมพันธ์ที่ได้รับรางวัล', color: 'bg-slate-100' },
@@ -290,6 +301,7 @@
                 tips: 'การสอบเข้าเพาะช่างต้องการแฟ้มสะสมงานที่แสดงอัตลักษณ์ชัดเจนและมีลายเส้น (Drawing) และงานสีน้ำที่เป็นของตนเองอย่างเชี่ยวชาญ แนะนำให้คัดเลือกงานที่ดีที่สุด 10 ชิ้นแล้วสแกนคุณภาพสูงครับ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สไตล์จิตรกรรมร่วมสมัย แดงเลือดหมู-ดำ', color: 'bg-red-950' },
                     { title: 'รวมงาน Drawing', desc: 'ผลงานลายเส้นดินสอและถ่าน', color: 'bg-slate-100' },
@@ -315,6 +327,7 @@
                 tips: 'พอร์ตของศิลปากรต้องชัดเจนเรื่อง Perspective และทัศนศิลป์ครับ พี่แชร์ขั้นตอนการคิดและไอเดียการตีโจทย์การออกแบบในพอร์ตเล่มนี้ไว้ด้วย เพื่อแสดงให้เห็นกระบวนการออกแบบที่ไม่ซ้ำใครครับ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สีเขียวเวอร์ดิจิส (สีน้ำทะเล) สัญลักษณ์ศิลปากร', color: 'bg-[#00A896]' },
                     { title: 'Sketch Design', desc: 'รวมงานสเก็ตช์ Perspective อาคารภายใน', color: 'bg-slate-100' },
@@ -340,6 +353,7 @@
                 tips: 'สำหรับน้อง ๆ ที่เรียน Pre-degree ไปด้วย การยื่นนิติศาสตร์ ม.รามคำแหง หรือการอวดทักษะในพอร์ตจะเน้นไปที่ทักษะการคิดวิเคราะห์ ความมีเหตุผลเชิงกฎหมาย และกิจกรรมสาธารณะประโยชน์เป็นหลักค่ะ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สีน้ำเงิน-ทอง สไตล์เป็นทางการและมั่นคง', color: 'bg-[#003366]' },
                     { title: 'ใบรายงานผลการเรียนล่วงหน้า', desc: 'พรีวิวใบทรานสคริปต์รายวิชาพรีดีกรี', color: 'bg-slate-100' },
@@ -365,6 +379,7 @@
                 tips: 'มฟล. เน้นการเรียนการสอนเป็นภาษาอังกฤษและจีน เพราะฉะนั้นพอร์ตโฟลิโอแนะแนวให้เขียนเป็นภาษาจีนคู่กับภาษาอังกฤษทั้งหมดค่ะ ยื่นคะแนน HSK ลงไปในหน้าประวัติด้วย จะช่วยให้กรรมการสนใจมากยิ่งขึ้น',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'ธีมแดงก่ำ-ทอง งดงามตามสไตล์แม่ฟ้าหลวง', color: 'bg-[#7A1F1D]' },
                     { title: 'HSK Certificate', desc: 'ใบรับรองผลคะแนน HSK และวิชาการ', color: 'bg-slate-100' },
@@ -390,6 +405,7 @@
                 tips: 'การยื่นพอร์ต ม.พะเยา ในสายวิทยาศาสตร์สุขภาพ ต้องเน้นย้ำถึงการลงพื้นที่เรียนรู้และการบริการส่วนรวมค่ะ นำภาพถ่ายที่จับต้องได้ตอนเรากำลังลงพื้นที่ช่วยเหลือสังคมหรือร่วมกับทางโรงพยาบาลมาใส่และวิเคราะห์ผลลัพธ์ค่ะ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'ธีมม่วง-ทอง หรูหราและอ่อนโยน', color: 'bg-[#5B2C6F]' },
                     { title: 'First Aid Training', desc: 'ภาพการอบรมกู้ชีพเบื้องต้น CPR', color: 'bg-slate-100' },
@@ -415,6 +431,7 @@
                 tips: 'ม.อ. ให้ความสำคัญอย่างมากกับคุณลักษณะที่เหมาะสมกับวิชาชีพพยาบาล ความอดทน ความเมตตา และความยืดหยุ่น ควรเขียนอธิบายความรู้สึกหลังจากที่ลงไปสังเกตการณ์ที่โรงพยาบาลจริง ๆ ว่าเราได้อะไรกลับมา',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สีน้ำเงินสว่าง-ทอง เอกลักษณ์ ม.อ. สะอาดตา', color: 'bg-[#002C6C]' },
                     { title: 'ประวัติการฝึกงานวิชาชีพ', desc: 'สรุปการทำงานร่วมกับพี่พยาบาลที่วอร์ดผู้ป่วยนอก', color: 'bg-slate-100' },
@@ -440,6 +457,7 @@
                 tips: 'คณะศึกษาศาสตร์ ม.ทักษิณ มองหาเด็กที่มีจิตวิญญาณความเป็นครู มีวาทศิลป์ และมีสื่อการสอนนวัตกรรมใหม่ ๆ ค่ะ การใส่ภาพและคิวอาร์โค้ดวิดีโอสอนของเราจะช่วยดึงคะแนนจากคณะกรรมการได้มหาศาลค่ะ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สีเทา-ฟ้า คลาสสิกตามสัญลักษณ์ ม.ทักษิณ', color: 'bg-[#1B4F72]' },
                     { title: 'นวัตกรรมการสอนภาษาไทย', desc: 'สรุปรูปแบบบอร์ดเกมและภาพวิดีโอสอนบนช่อง TikTok', color: 'bg-slate-100' },
@@ -465,6 +483,7 @@
                 tips: 'โควตาเกษตรเน้นความสม่ำเสมอของกิจกรรมที่เกี่ยวข้องกับวิชาการวิศวกรรมครับ พี่เน้นโชว์เคสงานอาสาที่ได้ลงมือปฏิบัติจริงควบคู่กับทฤษฎีครับ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'สีเขียว-ขาว ม.ก.', color: 'bg-[#006633]' },
                     { title: 'โครงงานวิศวกรรม', desc: 'สรุปงานคำวณโครงสร้าง', color: 'bg-slate-100' }
@@ -489,6 +508,7 @@
                 tips: 'พอร์ตสายรัฐศาสตร์ จุฬาฯ ต้องแสดงให้เห็นถึง "วิสัยทัศน์" ครับ พี่แนะให้เน้นกิจกรรมที่สะท้อนการมองปัญหาเชิงโครงสร้างและทักษะภาษาอังกฤษครับ',
                 hasPdpaChecked: true,
                 status: 'approved',
+                port_link: '#',
                 pagePreviews: [
                     { title: 'หน้าปก (Cover)', desc: 'ธีมชมพู-ทอง หรูหรา', color: 'bg-[#DF1995]' },
                     { title: 'เรียงความความสัมพันธ์ระหว่างประเทศ', desc: 'มุมมองต่อวิกฤตการณ์โลก', color: 'bg-slate-100' }
@@ -548,7 +568,7 @@
             const [formName, setFormName] = useState('');
             const [formNickname, setFormNickname] = useState('');
             const [formGpa, setFormGpa] = useState('');
-            const [formTrack, setFormTrack] = 'วิทย์-คณิต';
+            const [formTrack, setFormTrack] = useState('วิทย์-คณิต'); // Fixed structural bug from original code!
             const [formUni, setFormUni] = useState('จุฬาลงกรณ์มหาวิทยาลัย');
             const [formFaculty, setFormFaculty] = useState('วิศวกรรมศาสตร์');
             const [formMajor, setFormMajor] = useState('');
@@ -556,9 +576,11 @@
             const [formTitle, setFormTitle] = useState('');
             const [formHighlights, setFormHighlights] = useState('');
             const [formTips, setFormTips] = useState('');
+            const [formPortLink, setFormPortLink] = useState(''); // New input for Google Drive / Canva Link
             const [pdpaWarningAccepted, setPdpaWarningAccepted] = useState(false);
             const [pdpaConsent, setPdpaConsent] = useState(false);
             const [formFeedback, setFormFeedback] = useState('');
+            const [isSubmitting, setIsSubmitting] = useState(false);
 
             // AI Help State
             const [aiQuestion, setAiQuestion] = useState('');
@@ -609,7 +631,7 @@
                 setNotification({ title, message, type });
             };
 
-            // Submit Portfolio from Senior
+            // Submit Portfolio from Senior (Updated to submit to Google Sheets API and local simulation)
             const handleSubmitPortfolio = (e) => {
                 e.preventDefault();
                 if (!pdpaConsent) {
@@ -621,14 +643,16 @@
                     return;
                 }
 
-                if (!formName || !formUni || !formMajor || !formHighlights) {
+                if (!formName || !formUni || !formMajor || !formHighlights || !formPortLink) {
                     triggerNotification(
                         'ข้อมูลไม่ครบถ้วน',
-                        'กรุณากรอกข้อมูลสำคัญที่มีสัญลักษณ์ (*) ให้ครบถ้วน',
+                        'กรุณากรอกข้อมูลสำคัญที่มีสัญลักษณ์ (*) และลิงก์ไฟล์พอร์ตจริงให้ครบถ้วนนะครับ',
                         'info'
                     );
                     return;
                 }
+
+                setIsSubmitting(true);
 
                 const newPort = {
                     id: 'port-' + Date.now(),
@@ -645,25 +669,59 @@
                     tips: formTips || 'สู้ ๆ นะครับน้อง ๆ ความพยายามไม่เคยทรยศใคร มาร่วมเป็นลูกแม่พิกุลทองด้วยกันครับ',
                     hasPdpaChecked: pdpaWarningAccepted,
                     status: 'pending', // Awaiting admin approval
+                    port_link: formPortLink,
                     pagePreviews: [
                         { title: 'หน้าปกจำลอง', desc: `ยื่น ${formFaculty} - ${formMajor}`, color: 'bg-slate-700' },
                         { title: 'ผลงานหลัก', desc: 'ข้อมูลจากผลงานเด่นที่พี่กรอกเข้ามา', color: 'bg-slate-100' }
                     ]
                 };
 
-                setPortfolios([newPort, ...portfolios]);
-                setFormFeedback('success');
-                
-                // Clear Form
-                setFormName('');
-                setFormNickname('');
-                setFormGpa('');
-                setFormMajor('');
-                setFormHighlights('');
-                setFormTips('');
-                setFormTitle('');
-                setPdpaWarningAccepted(false);
-                setPdpaConsent(false);
+                // บรรจุข้อมูลสำหรับส่งออกไปยัง Google Sheet Web App
+                const sheetData = {
+                    fullname: formName,
+                    nickname: formNickname || '-',
+                    major: formTrack,
+                    gpax: formGpa || 'N/A',
+                    university: formUni,
+                    faculty: formFaculty,
+                    field: formMajor,
+                    round: formRound,
+                    title: formTitle || `Portfolio ยื่นคณะ${formFaculty} ${formUni}`,
+                    highlights: formHighlights,
+                    intro: formTips || 'สู้ ๆ นะครับน้อง ๆ',
+                    port_link: formPortLink
+                };
+
+                // ส่งข้อมูลถ้าผู้ใช้ระบุ GOOGLE_SCRIPT_URL แล้ว
+                if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== "") {
+                    fetch(GOOGLE_SCRIPT_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(sheetData)
+                    })
+                    .then(() => {
+                        // บันทึกเข้าจำลองระบบหน้าเว็บต่อ
+                        setPortfolios([newPort, ...portfolios]);
+                        setFormFeedback('success');
+                        setIsSubmitting(false);
+                    })
+                    .catch(err => {
+                        console.error("Sheet API Error:", err);
+                        triggerNotification('เกิดข้อผิดพลาด', 'ไม่สามารถติดต่อเซิร์ฟเวอร์ Google ได้ชั่วคราว ดำเนินการส่งข้อมูลจำลองแบบภายในแทน', 'info');
+                        
+                        setPortfolios([newPort, ...portfolios]);
+                        setFormFeedback('success');
+                        setIsSubmitting(false);
+                    });
+                } else {
+                    // หากยังไม่ได้ใส่ URL แต่อยากจำลองการทำสเตตัสในเครื่อง
+                    setPortfolios([newPort, ...portfolios]);
+                    setFormFeedback('success');
+                    setIsSubmitting(false);
+                }
             };
 
             // Admin Authentication Simulation
@@ -959,7 +1017,7 @@
                                     )}
                                 </div>
 
-                                {/* Portfolios Grid - Adjusted to EXACTLY 3 COLUMNS (`grid-cols-1 md:grid-cols-3`) as requested */}
+                                {/* Portfolios Grid - Adjusted to EXACTLY 3 COLUMNS */}
                                 {filteredPortfolios.length === 0 ? (
                                     <div className="bg-white rounded-2xl border-2 border-dashed border-slate-300 p-12 text-center max-w-xl mx-auto my-8">
                                         <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
@@ -1086,7 +1144,7 @@
                                         <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <i data-lucide="check-circle-2" className="w-10 h-10"></i>
                                         </div>
-                                        <h3 className="text-xl font-bold mb-2">ส่งข้อมูลพอร์ตเรียบร้อยแล้วครับพี่สิทธิ์เก่า บ.ส.!</h3>
+                                        <h3 className="text-xl font-bold mb-2">ส่งข้อมูลพอร์ตเรียบร้อยแล้วครับพี่ศิษย์เก่า บ.ส.!</h3>
                                         <p className="text-sm text-emerald-600 max-w-md mx-auto mb-6">
                                             ข้อมูลพอร์ตถูกส่งเข้าไปหลังบ้านเพื่อให้อาจารย์และผู้ดูแลระบบตรวจสอบความปลอดภัย (PDPA) และความเหมาะสม เมื่อเรียบร้อยแล้วระบบจะนำขึ้นเผยแพร่บนบอร์ดแสดงพอร์ตทันทีครับ
                                         </p>
@@ -1305,6 +1363,24 @@
                                             ></textarea>
                                         </div>
 
+                                        {/* 🌟 New Form Field: Google Drive / Canva Link */}
+                                        <div className="mb-6">
+                                            <label className="block text-xs font-bold text-amber-600 uppercase tracking-wider mb-1.5">
+                                                ลิงก์แฟ้มสะสมผลงานจริง (Google Drive / Canva) *
+                                            </label>
+                                            <input 
+                                                type="url" 
+                                                required
+                                                placeholder="https://drive.google.com/file/d/..." 
+                                                value={formPortLink}
+                                                onChange={(e) => setFormPortLink(e.target.value)}
+                                                className="w-full px-3.5 py-2.5 border-2 border-amber-300/60 bg-amber-50/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 placeholder-slate-400"
+                                            />
+                                            <p className="mt-1.5 text-[11px] text-slate-500">
+                                                💡 อย่าลืมอนุญาตสิทธิ์ในกูเกิลไดรฟ์ให้เป็น <span className="font-semibold text-amber-700">"ทุกคนที่มีลิงก์สามารถดูได้"</span> เพื่อความสะดวกของน้องๆ นะครับ
+                                            </p>
+                                        </div>
+
                                         {/* PDPA Final Consent checkbox */}
                                         <div className="flex items-start gap-2.5 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <input 
@@ -1323,11 +1399,11 @@
                                         {/* Submit Button */}
                                         <button 
                                             type="submit"
-                                            disabled={!pdpaWarningAccepted || !pdpaConsent}
-                                            className={`w-full py-3 rounded-xl font-bold text-sm shadow transition-all flex items-center justify-center gap-2 ${(!pdpaWarningAccepted || !pdpaConsent) ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-[#800000] hover:bg-rose-950 text-white'}`}
+                                            disabled={!pdpaWarningAccepted || !pdpaConsent || isSubmitting}
+                                            className={`w-full py-3 rounded-xl font-bold text-sm shadow transition-all flex items-center justify-center gap-2 ${(!pdpaWarningAccepted || !pdpaConsent || isSubmitting) ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-[#800000] hover:bg-rose-950 text-white'}`}
                                         >
                                             <i data-lucide="send" className="w-4 h-4"></i>
-                                            ส่งพอร์ตเข้าคลังระบบ (จำลองตรวจสอบหลังบ้านก่อนแสดงผล)
+                                            {isSubmitting ? "กำลังส่งข้อมูลลง Google Sheet..." : "ส่งพอร์ตเข้าคลังระบบ (บันทึกลง Sheet และจำลองเข้าบอร์ด)"}
                                         </button>
                                     </form>
                                 )}
@@ -1350,7 +1426,7 @@
                                     </div>
                                     <div className="mt-8 bg-black/25 p-4 rounded-xl border border-white/10 text-xs">
                                         <h4 className="font-semibold text-amber-300 mb-1 flex items-center gap-1">
-                                            <i data-lucide="info" class="w-3.5 h-3.5"></i> ข้อเสนอแนะยอดฮิต:
+                                            <i data-lucide="info" className="w-3.5 h-3.5"></i> ข้อเสนอแนะยอดฮิต:
                                         </h4>
                                         <ul className="space-y-1.5 text-rose-100 list-disc list-inside">
                                             <li>"อยากเข้าออกแบบภายใน ศิลปากร ต้องเก็บบอร์ดผลงานแบบไหน?"</li>
@@ -1428,7 +1504,7 @@
                                         <form onSubmit={handleAdminLogin} className="space-y-4">
                                             <div className="relative">
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                                                    <i data-lucide="key-round" class="w-4 h-4"></i>
+                                                    <i data-lucide="key-round" className="w-4 h-4"></i>
                                                 </span>
                                                 <input 
                                                     type="password" 
@@ -1467,7 +1543,7 @@
                                                     onClick={() => setIsAdminLoggedIn(false)}
                                                     className="text-xs text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 transition-all font-semibold flex items-center gap-1"
                                                 >
-                                                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                                                    <i data-lucide="log-out" className="w-3.5 h-3.5"></i>
                                                     ล็อกเอาท์แอดมิน
                                                 </button>
                                             </div>
@@ -1663,19 +1739,25 @@
 
                                     {/* Modal Action footer */}
                                     <div className="mt-8 pt-4 border-t border-slate-100 flex gap-3">
-                                        <button 
-                                            onClick={() => {
-                                                triggerNotification(
-                                                    'จำลองการเข้าถึงสำเร็จ!',
-                                                    `ระบบจำลองความพยายามเชื่อมต่อไปยังคลังไฟล์ Google Drive เพื่อเปิดดูเล่มผลงานจริงของพี่ ${selectedPort.seniorName} ซึ่งได้รับอนุญาตเผยแพร่เฉพาะภายในสถาบัน บ.ส.`,
-                                                    'success'
-                                                );
+                                        <a 
+                                            href={selectedPort.port_link && selectedPort.port_link !== "#" ? selectedPort.port_link : undefined}
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => {
+                                                if(!selectedPort.port_link || selectedPort.port_link === "#") {
+                                                    e.preventDefault();
+                                                    triggerNotification(
+                                                        'พอร์ตโฟลิโอนี้เป็นข้อมูลระบบจำลอง',
+                                                        `พอร์ตของพี่ ${selectedPort.seniorName} เล่มนี้เป็นข้อมูลตั้งต้นเพื่อเป็นตัวอย่าง จึงยังไม่มีไฟล์ Google Drive จริงให้เปิดดูครับ แต่พอร์ตที่ส่งเข้ามาใหม่หลังจากนี้จะกดเปิดดูได้จริงทั้งหมดจ้า!`,
+                                                        'info'
+                                                    );
+                                                }
                                             }}
-                                            className="flex-1 py-3 bg-[#800000] hover:bg-rose-950 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md"
+                                            className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md text-center"
                                         >
-                                            <i data-lucide="download" className="w-4 h-4"></i>
-                                            เปิดลิงก์เล่มจริง (Mock Drive)
-                                        </button>
+                                            <i data-lucide="external-link" className="w-4 h-4"></i>
+                                            เปิดดูไฟล์พอร์ตโฟลิโอเล่มจริง (Drive)
+                                        </a>
                                         <button 
                                             onClick={() => setSelectedPort(null)}
                                             className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs transition-all border border-slate-200"
@@ -1730,3 +1812,6 @@
     </script>
 </body>
 </html>
+
+
+พี่ได้แก้ไขโค้ดทั้งหมดให้กลับมาทำงานได้อย่างสวยงามตามปกติแล้วครับ มีคำถามอื่นเกี่ยวกับหน้าตาหรือโค้ดส่วนไหนเพิ่มเติม สามารถบอกพี่ได้ตลอดเวลาเลยนะจ๊ะ!
