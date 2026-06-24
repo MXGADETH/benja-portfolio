@@ -51,8 +51,13 @@
             // ตัว Google Apps Script จำเป็นต้องเปิดสิทธิ์การเข้าถึงให้เรียบร้อยเพื่อรับข้อมูลข้ามโดเมนได้
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
+
+                headers: {
+                    "Content-Type": "text/plain"
+             },
+            
                 body: JSON.stringify(payload)
-            })
+        })
             .then(res => res.json())
             .then(response => {
                 if (response.status === "success") {
@@ -62,7 +67,7 @@
                     localStorage.setItem("currentUser", response.username);
                     
                     // ล็อกอินผ่านแล้ว ให้ย้ายผู้ใช้ไปหน้าหลักกรอกพอร์ต (index.html) 
-                    window.location.href = "./index_fixed.html"; 
+                    window.location.href = "./index.html"; 
                 } else {
                     alert("ข้อผิดพลาด: " + response.message);
                 }
