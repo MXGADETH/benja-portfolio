@@ -1,354 +1,336 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B.S. Portfolio Hub - โรงเรียนเบญจมราชานุสรณ์</title>
-    <!-- Fonts -->
+
+    <title>B.S. Portfolio Hub</title>
+
+    <meta name="description"
+        content="ระบบรวบรวม Portfolio รุ่นพี่ โรงเรียนเบญจมราชานุสรณ์">
+
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Sarabun', 'Inter', sans-serif;
-        }
-        .bs-bg-maroon { background-color: #800000; }
-        .bg-pattern {
-            background-color: #600000;
-            background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 0), radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0);
-            background-size: 24px 24px;
-            background-position: 0 0, 12px 12px;
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    </style>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-red-800 selection:text-white">
 
-    <div id="root"></div>
+<body class="bg-slate-100">
 
-    <!-- React Dependencies -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <!-- Babel Compiler -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- ========================= -->
+    <!-- Header -->
+    <!-- ========================= -->
 
-    <script type="text/babel">
-        // ดึงตัวแปรที่ React เตรียมไว้ให้มาใช้ตรงๆ (ห้ามใช้คำสั่ง import เด็ดขาด)
-        const { useState, useMemo } = React;
+    <header class="shadow bg-white sticky top-0 z-50">
 
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAGwlUc6aA18z0j5TWCQvHMuoPLXarvK-wvDGF2HkZT3yG-xERFH8WbzuKIEQxFNjAPQ/exec";
+        <div class="max-w-7xl mx-auto">
 
-        const UNI_COLORS = {
-            'จุฬาลงกรณ์มหาวิทยาลัย': { primary: '#e11d48', text: 'text-rose-600', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
-            'มหาวิทยาลัยธรรมศาสตร์': { primary: '#eab308', text: 'text-amber-600', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
-            'มหาวิทยาลัยเกษตรศาสตร์': { primary: '#16a34a', text: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-            'มหาวิทยาลัยมหิดล': { primary: '#2563eb', text: 'text-blue-600', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-            'มหาวิทยาลัยศรีนครินทรวิโรฒ': { primary: '#06b6d4', text: 'text-cyan-600', badge: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
-            'สจล. (ลาดกระบัง)': { primary: '#ea580c', text: 'text-orange-600', badge: 'bg-orange-50 text-orange-700 border-orange-200' }
-        };
+            <div class="flex items-center justify-between h-16 px-4">
 
-        const UNI_LOGOS = {
-            'จุฬาลงกรณ์มหาวิทยาลัย': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Chulalongkorn_University_Seal.svg/1200px-Chulalongkorn_University_Seal.svg.png',
-            'มหาวิทยาลัยธรรมศาสตร์': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Thammasat_University_Seal.svg/1200px-Thammasat_University_Seal.svg.png',
-            'มหาวิทยาลัยเกษตรศาสตร์': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Kasetsart_University_Seal.svg/1200px-Kasetsart_University_Seal.svg.png',
-            'มหาวิทยาลัยมหิดล': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Mahidol_University_Seal.svg/1200px-Mahidol_University_Seal.svg.png',
-            'มหาวิทยาลัยศรีนครินทรวิโรฒ': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Srinakharinwirot_University_Seal.svg/1200px-Srinakharinwirot_University_Seal.svg.png',
-            'สจล. (ลาดกระบัง)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/KMITL_Logo.svg/1200px-KMITL_Logo.svg.png'
-        };
+                <div class="flex items-center gap-3">
 
-        const INITIAL_PORTFOLIOS = [
-            {
-                id: 'port-1',
-                title: 'พอร์ตสายวิศวะคอมฯ ผลงานแฮกกาธอนและเว็บชุมชนโรงเรียน',
-                seniorName: 'พี่ณัฐชนน มั่งคั่ง (บ.ส. 41)',
-                nickname: 'นนท์',
-                gpa: '3.95',
-                track: 'วิทย์-คณิต-คอมพิวเตอร์',
-                university: 'สจล. (ลาดกระบัง)',
-                faculty: 'วิศวกรรมศาสตร์',
-                major: 'วิศวกรรมคอมพิวเตอร์',
-                round: 'รอบ 1 Portfolio',
-                highlights: [
-                    'รางวัลชนะเลิศการแข่งขันเขียนโปรแกรมระดับภูมิภาคปี 2568',
-                    'ผู้พัฒนาเว็บไซต์หลักสำหรับรับข้อมูลกิจกรรมเบญจมราชานุสรณ์นิทรรศน์',
-                    'ผ่านการอบรมค่ายสอวน. คอมพิวเตอร์ ค่าย 2'
-                ],
-                tips: 'แนะนำให้ทำสรุปผลงานโค้ดลง GitHub และแคปเจอร์หน้า UI ที่เราออกแบบให้เห็นชัดเจนในเล่ม ครับ',
-                hasPdpaChecked: true,
-                status: 'approved',
-                port_link: 'https://drive.google.com',
-                pagePreviews: [
-                    { title: 'หน้าปก (Cover)', desc: 'โทนสีแสดสว่างสไตล์สถาบัน พร้อมรูปถ่ายสูททางการ', color: 'bg-orange-600' },
-                    { title: 'ประวัติ (Profile)', desc: 'ประวัติส่วนตัวและคะแนนเฉลี่ยสะสม 5 เทอม', color: 'bg-slate-700' }
-                ]
-            }
-        ];
+                    <div class="logo-box">
 
-        function App() {
-            const [currentUser, setCurrentUser] = useState(localStorage.getItem("currentUser") || null);
-            const [portfolios, setPortfolios] = useState(INITIAL_PORTFOLIOS);
-            const [selectedPort, setSelectedPort] = useState(null);
+                        BS
 
-            const [searchTerm, setSearchTerm] = useState('');
-            const [selectedUni, setSelectedUni] = useState('');
-            const [selectedRound, setSelectedRound] = useState('');
-
-            const [formName, setFormName] = useState('');
-            const [formNickname, setFormNickname] = useState('');
-            const [formTrack, setFormTrack] = useState('');
-            const [formGpa, setFormGpa] = useState('');
-            const [formUni, setFormUni] = useState('');
-            const [formFaculty, setFormFaculty] = useState('');
-            const [formMajor, setFormMajor] = useState('');
-            const [formRound, setFormRound] = useState('รอบ 1 Portfolio');
-            const [formTitle, setFormTitle] = useState('');
-            const [formHighlights, setFormHighlights] = useState('');
-            const [formTips, setFormTips] = useState('');
-            const [formPortLink, setFormPortLink] = useState('');
-
-            const [isSubmitting, setIsSubmitting] = useState(false);
-            const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-            const filteredPortfolios = useMemo(() => {
-                return portfolios.filter(port => {
-                    const matchesSearch = 
-                        port.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        port.faculty.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        port.major.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        port.seniorName.toLowerCase().includes(searchTerm.toLowerCase());
-                    const matchesUni = selectedUni === '' || port.university === selectedUni;
-                    const matchesRound = selectedRound === '' || port.round === selectedRound;
-                    return matchesSearch && matchesUni && matchesRound;
-                });
-            }, [portfolios, searchTerm, selectedUni, selectedRound]);
-
-            const handleLogout = () => {
-                localStorage.removeItem("currentUser");
-                setCurrentUser(null);
-                alert("ออกจากระบบเรียบร้อยแล้ว");
-                window.location.reload();
-            };
-
-            const handleSubmitPortfolio = async (e) => {
-                e.preventDefault();
-                if (!currentUser) {
-                    alert("คุณต้องเข้าสู่ระบบก่อนครับ");
-                    return;
-                }
-                setIsSubmitting(true);
-
-                const highlightsArray = formHighlights.split('\n').filter(item => item.trim() !== '');
-                const sheetData = {
-                    action: "savePort",
-                    username: currentUser, 
-                    fullname: formName,
-                    nickname: formNickname,
-                    major: formTrack,
-                    gpax: formGpa,
-                    university: formUni,
-                    faculty: formFaculty,
-                    field: formMajor,
-                    round: formRound,
-                    title: formTitle,
-                    highlights: formHighlights,
-                    intro: formTips,
-                    port_link: formPortLink
-                };
-
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: JSON.stringify(sheetData)
-                    });
-
-                    const newLocalPort = {
-                        id: `port-${Date.now()}`,
-                        title: formTitle,
-                        seniorName: `${formName} (บ.ส. บัญชี: ${currentUser})`,
-                        nickname: formNickname,
-                        gpa: formGpa,
-                        track: formTrack,
-                        university: formUni,
-                        faculty: formFaculty,
-                        major: formMajor,
-                        round: formRound,
-                        highlights: highlightsArray.length > 0 ? highlightsArray : ['บันทึกสำเร็จ'],
-                        tips: formTips,
-                        hasPdpaChecked: true,
-                        status: 'approved',
-                        port_link: formPortLink,
-                        pagePreviews: [{ title: 'หน้าปก (Cover)', desc: 'ข้อมูลประวัติผู้ยื่น', color: 'bg-red-800' }]
-                    };
-
-                    setPortfolios(prev => [newLocalPort, ...prev]);
-                    setShowSuccessModal(true);
-                } catch (error) {
-                    console.error(error);
-                    alert('เกิดข้อผิดพลาด กรุณาลองใหมอีกครั้ง');
-                } finally {
-                    setIsSubmitting(false);
-                }
-            };
-
-            return (
-                <div className="flex flex-col min-h-screen">
-                    <div className="bg-gradient-to-r from-red-800 to-amber-700 text-white py-2.5 px-4 text-center text-xs font-medium shadow-sm">
-                        <span>ระบบสารสนเทศเพื่อการศึกษาต่อสภานักเรียน โรงเรียนเบญจมราชานุสรณ์ นนทบุรี</span>
                     </div>
 
-                    <nav className="bg-white border-b border-slate-200 sticky top-0 z-40 backdrop-blur-md bg-white/90">
-                        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bs-bg-maroon rounded-xl flex items-center justify-center text-white font-bold shadow-md">B.S.</div>
-                                <div>
-                                    <h1 className="text-base font-bold text-slate-900 leading-tight">B.S. Portfolio Hub</h1>
-                                    <p className="text-[11px] text-slate-500 font-medium">คลังข้อมูลพอร์ตโฟลิโอลูกเบญจมฯ</p>
-                                </div>
-                            </div>
-                            <div>
-                                {currentUser ? (
-                                    <div className="flex items-center gap-3 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-                                        <span className="text-xs font-semibold text-slate-700">สวัสดี, {currentUser}</span>
-                                        <button onClick={handleLogout} className="text-xs font-bold text-red-600 border-l border-slate-300 pl-2 cursor-pointer">ออกจากระบบ</button>
-                                    </div>
-                                ) : (
-                                    <a href="./login.html" className="bg-red-800 text-white text-xs font-bold px-4 py-2 rounded-xl">เข้าสู่ระบบ / สมัครสมาชิก</a>
-                                )}
-                            </div>
-                        </div>
-                    </nav>
+                    <div>
 
-                    <header className="bg-pattern text-white py-12 px-4 shadow-inner">
-                        <div className="max-w-7xl mx-auto">
-                            <h2 className="text-3xl font-extrabold tracking-tight">
-                                คลังพอร์ตโฟลิโอบอร์ดนิทรรศการ <br/>
-                                <span className="text-amber-400">ส่งต่อแรงบันดาลใจจากรุ่นพี่สู่รุ่นน้อง</span>
-                            </h2>
-                        </div>
-                    </header>
+                        <h1 class="text-lg font-bold">
 
-                    <main className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
-                        <section className="lg:col-span-7 space-y-6">
-                            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4">
-                                <h3 className="font-bold text-slate-900 text-sm">🔍 ค้นหาและคัดกรองพอร์ตโฟลิโอ</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    <input type="text" placeholder="พิมพ์ชื่อคณะ, สาขา..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="px-3 py-2 border border-slate-300 rounded-xl text-xs" />
-                                    <select value={selectedUni} onChange={(e) => setSelectedUni(e.target.value)} className="px-3 py-2 border border-slate-300 rounded-xl text-xs">
-                                        <option value="">เลือกมหาวิทยาลัยทั้งหมด</option>
-                                        {Object.keys(UNI_COLORS).map(name => <option key={name} value={name}>{name}</option>)}
-                                    </select>
-                                    <select value={selectedRound} onChange={(e) => setSelectedRound(e.target.value)} className="px-3 py-2 border border-slate-300 rounded-xl text-xs">
-                                        <option value="">เลือกรอบทั้งหมด</option>
-                                        <option value="รอบ 1 Portfolio">รอบ 1 Portfolio</option>
-                                        <option value="รอบ 2 Quota">รอบ 2 Quota</option>
-                                    </select>
-                                </div>
-                            </div>
+                            B.S. Portfolio Hub
 
-                            <div className="space-y-4">
-                                {filteredPortfolios.map(port => {
-                                    const brand = UNI_COLORS[port.university] || { text: 'text-slate-700', badge: 'bg-slate-100' };
-                                    return (
-                                        <div key={port.id} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row justify-between gap-4 items-start">
-                                            <div className="space-y-1.5 flex-1">
-                                                <div className="flex gap-1.5">
-                                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${brand.badge} ${brand.text}`}>{port.university}</span>
-                                                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">{port.round}</span>
-                                                </div>
-                                                <h4 className="font-bold text-slate-900 text-sm">{port.title}</h4>
-                                                <p className="text-xs text-slate-500">โดย: {port.seniorName} | เกรด: {port.gpa}</p>
-                                            </div>
-                                            <button onClick={() => setSelectedPort(port)} className="text-xs font-bold px-4 py-2 border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">ดูรายละเอียด</button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </section>
+                        </h1>
 
-                        <section className="lg:col-span-5">
-                            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                                <div className="p-4 bg-slate-900 text-white">
-                                    <h3 className="font-bold text-xs sm:text-sm">📝 ฟอร์มศิษย์เก่าร่วมแชร์สถิติ</h3>
-                                </div>
-                                <form onSubmit={handleSubmitPortfolio} className="p-5 space-y-4">
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="block text-[11px] font-bold text-slate-700 mb-1">ชื่อ-นามสกุล *</label>
-                                            <input type="text" required value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[11px] font-bold text-slate-700 mb-1">ชื่อเล่น *</label>
-                                            <input type="text" required value={formNickname} onChange={(e) => setFormNickname(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">มหาวิทยาลัยปลายทาง *</label>
-                                        <input type="text" required value={formUni} onChange={(e) => setFormUni(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" placeholder="เช่น จุฬาลงกรณ์มหาวิทยาลัย" />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="block text-[11px] font-bold text-slate-700 mb-1">คณะ *</label>
-                                            <input type="text" required value={formFaculty} onChange={(e) => setFormFaculty(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[11px] font-bold text-slate-700 mb-1">สาขา *</label>
-                                            <input type="text" required value={formMajor} onChange={(e) => setFormMajor(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">เกรดเฉลี่ย (GPAX) *</label>
-                                        <input type="number" step="0.01" required value={formGpa} onChange={(e) => setFormGpa(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">หัวข้อ/คอนเซปต์พอร์ต *</label>
-                                        <input type="text" required value={formTitle} onChange={(e) => setFormTitle(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">ลิงก์เล่มพอร์ต (Google Drive) *</label>
-                                        <input type="url" required value={formPortLink} onChange={(e) => setFormPortLink(e.target.value)} className="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs" />
-                                    </div>
-                                    <button type="submit" disabled={isSubmitting} className="w-full bs-bg-maroon text-white font-bold py-2.5 rounded-xl text-xs disabled:opacity-50 cursor-pointer">
-                                        {isSubmitting ? 'กำลังบันทึกข้อมูล...' : 'บันทึกข้อมูลแบ่งปันลงบอร์ด'}
-                                    </button>
-                                </form>
-                            </div>
-                        </section>
-                    </main>
+                        <p class="text-xs text-gray-500">
 
-                    {selectedPort && (
-                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-                                <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
-                                    <span className="text-xs font-bold text-slate-500">รายละเอียดพอร์ตโฟลิโอ</span>
-                                    <button onClick={() => setSelectedPort(null)} className="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 font-bold text-xs cursor-pointer">✕</button>
-                                </div>
-                                <div className="p-6 overflow-y-auto space-y-4 flex-1">
-                                    <h3 className="text-base font-bold text-slate-900">{selectedPort.title}</h3>
-                                    <p className="text-xs text-slate-600">สถาบัน: {selectedPort.university} | คณะ: {selectedPort.faculty} | สาขา: {selectedPort.major}</p>
-                                    <div className="p-4 bg-amber-50 rounded-xl border text-xs text-amber-800">{selectedPort.tips || 'ไม่มีข้อแนะนำเพิ่มเติม'}</div>
-                                </div>
-                                <div className="p-4 bg-slate-50 border-t flex justify-end">
-                                    <a href={selectedPort.port_link} target="_blank" rel="noreferrer" className="bg-red-800 text-white text-xs font-bold px-4 py-2 rounded-xl">🔗 เปิดดูเล่มพอร์ตตัวเต็ม</a>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                            Benjamarachanusorn School
 
-                    <footer className="bg-slate-900 text-white py-6 text-center text-xs mt-12">
-                        <p>© 2026 Benjamarachanusorn School Portfolio Hub.</p>
-                    </footer>
+                        </p>
+
+                    </div>
+
                 </div>
-            );
-        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+                <div id="userMenu">
+
+                    <a href="login.html"
+                        class="bg-red-800 hover:bg-red-900 text-white px-5 py-2 rounded-xl">
+
+                        เข้าสู่ระบบ
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- ========================= -->
+    <!-- Hero -->
+    <!-- ========================= -->
+
+    <section class="hero">
+
+        <div class="max-w-7xl mx-auto px-4 py-14">
+
+            <h2 class="text-4xl font-bold text-white">
+
+                คลังพอร์ตโฟลิโอ
+
+            </h2>
+
+            <p class="text-white mt-3">
+
+                ส่งต่อแรงบันดาลใจจากรุ่นพี่สู่รุ่นน้อง
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- Search -->
+    <!-- ========================= -->
+
+    <section class="max-w-7xl mx-auto px-4 mt-8">
+
+        <div class="card">
+
+            <h3 class="section-title">
+
+                ค้นหาพอร์ต
+
+            </h3>
+
+            <div class="grid md:grid-cols-3 gap-4 mt-4">
+
+                <input
+                    id="searchInput"
+                    type="text"
+                    class="input"
+                    placeholder="ค้นหาคณะ หรือ สาขา">
+
+                <select
+                    id="universityFilter"
+                    class="input">
+
+                    <option value="">
+
+                        ทุกมหาวิทยาลัย
+
+                    </option>
+
+                </select>
+
+                <select
+                    id="roundFilter"
+                    class="input">
+
+                    <option value="">
+
+                        ทุกรอบ
+
+                    </option>
+
+                    <option>
+
+                        รอบ 1 Portfolio
+
+                    </option>
+
+                    <option>
+
+                        รอบ 2 Quota
+
+                    </option>
+
+                    <option>
+
+                        รอบ 3 Admission
+
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- Portfolio List -->
+    <!-- ========================= -->
+
+    <section class="max-w-7xl mx-auto px-4 mt-8">
+
+        <div
+            id="portfolioContainer"
+            class="grid lg:grid-cols-2 gap-6">
+
+        </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- Submit Form -->
+    <!-- ========================= -->
+
+    <section class="max-w-7xl mx-auto px-4 my-10">
+
+        <div class="card">
+
+            <h2 class="section-title">
+
+                แชร์ Portfolio
+
+            </h2>
+
+            <form id="portfolioForm">
+
+                <div class="grid md:grid-cols-2 gap-5 mt-5">
+
+                    <input
+                        id="fullname"
+                        class="input"
+                        placeholder="ชื่อ-นามสกุล">
+
+                    <input
+                        id="nickname"
+                        class="input"
+                        placeholder="ชื่อเล่น">
+
+                    <input
+                        id="gpax"
+                        class="input"
+                        placeholder="GPAX">
+
+                    <input
+                        id="faculty"
+                        class="input"
+                        placeholder="คณะ">
+
+                    <input
+                        id="major"
+                        class="input"
+                        placeholder="สาขา">
+
+                    <input
+                        id="university"
+                        class="input"
+                        placeholder="มหาวิทยาลัย">
+
+                    <input
+                        id="title"
+                        class="input md:col-span-2"
+                        placeholder="ชื่อ Portfolio">
+
+                    <textarea
+                        id="highlights"
+                        class="textarea md:col-span-2"
+                        rows="5"
+                        placeholder="ผลงานเด่น"></textarea>
+
+                    <textarea
+                        id="tips"
+                        class="textarea md:col-span-2"
+                        rows="5"
+                        placeholder="คำแนะนำ"></textarea>
+
+                    <input
+                        id="portlink"
+                        class="input md:col-span-2"
+                        placeholder="Google Drive">
+
+                </div>
+
+                <button
+                    class="btn-primary mt-6"
+                    type="submit">
+
+                    บันทึก Portfolio
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- Modal -->
+    <!-- ========================= -->
+
+    <div
+        id="portfolioModal"
+        class="hidden modal">
+
+        <div class="modal-box">
+
+            <button
+                id="closeModal"
+                class="close-btn">
+
+                ✕
+
+            </button>
+
+            <div id="modalContent">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Footer -->
+    <!-- ========================= -->
+
+    <footer class="bg-slate-900 text-white mt-10">
+
+        <div class="max-w-7xl mx-auto px-4 py-8 text-center">
+
+            © 2026
+
+            B.S. Portfolio Hub
+
+        </div>
+
+    </footer>
+
+    <!-- JavaScript -->
+
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/form.js"></script>
+    <script src="js/portfolio.js"></script>
+    <script src="js/app.js"></script>
+
 </body>
+
 </html>
